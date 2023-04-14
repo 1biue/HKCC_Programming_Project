@@ -3,6 +3,9 @@
 #include <string>
 using namespace std;
 
+void hello() {
+	
+}
 int extractFields(string line, char fields[][101]) {
 	/*
 	*	Suggested algorithm:
@@ -58,3 +61,4 @@ int main() {
 
 	return 0;
 }
+
