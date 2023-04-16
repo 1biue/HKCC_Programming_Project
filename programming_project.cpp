@@ -6,6 +6,7 @@ using namespace std;
 void hello() {
 	
 }
+
 int extractFields(string line, char fields[][101]) {
 	/*
 	*	Suggested algorithm:
@@ -50,6 +51,10 @@ void readCSV(string filename) {
 
 	cout << countRecords << " Record(s) imported.\n";
 	inFile.close();
+}
+
+void return_book() {
+
 }
 
 int main() {
