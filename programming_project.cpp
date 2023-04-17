@@ -1,11 +1,10 @@
 	#include <iostream>
 	#include <fstream>	// for file input/output
 	#include <string>
+	#include <vector>
+
 	using namespace std;
 
-	void hello() {
-	
-	}
 
 	int extractFields(string line, char fields[][101]) {
 		int numFields = 0;
@@ -58,6 +57,55 @@
 		cout << countRecords << " Record(s) imported.\n";
 		inFile.close();
 	}
+
+	class Borrower {
+	private:
+		string id;
+		string name;
+		int quota;
+		vector<string> borrowedBooks;
+
+	public:
+		Borrower(string i_d, string n_ame) {
+			i_d = id;
+			n_ame = name;
+			quota = 5; // Initialize quota to 5
+		}
+
+		// Get borrower ID
+		string getId() {
+			return id;
+		}
+
+		// Get borrower name
+		string getName() {
+			return name;
+		}
+
+		// Check if borrower has quota to borrow more books
+		bool canBorrow() {
+			return quota > 0;
+		}
+
+		// Get number of books borrowed by borrower
+		int getNumBorrowed() {
+			return borrowedBooks.size();
+		}
+
+		// Borrow a book
+		void borrowBook(string bookId) {
+			borrowedBooks.push_back(bookId);
+			quota--;
+		}
+
+		// Print list of borrowed books
+		void printBorrowedBooks() {
+			cout << "Borrowed books:" << endl;
+			for (string bookId : borrowedBooks) {
+				cout << bookId << endl;
+			}
+		}
+	};
 
 	void return_book() {
 		string borrowerID;
