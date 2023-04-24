@@ -58,6 +58,36 @@
 		inFile.close();
 	}
 
+	void readline(string filename, string info) {//modify form above
+		fstream inFile;
+		string line;
+		char fields[10][101] = {};
+		int numFields;
+		int countRecords = 0;
+		inFile.open(filename);
+		if (!inFile.is_open()) {
+			cout << "Cannot open file \"" << filename << "\"\n";
+			return;
+		}
+		while (getline(inFile, line, '\n')) {
+			numFields = extractFields(line, fields);
+			if (numFields > 0 && strcmp(fields[3], info.c_str()) == 0) {
+				for (int i = 0; i < numFields; i++)
+					cout << i << ": " << fields[i] << endl;
+				cout << "\n";
+				countRecords++;
+			}
+		}
+		if (countRecords == 0) {
+			cout << "No records found";
+		}
+		else {
+			printf(" %i record(s) found by %s \n", countRecords, info.c_str());
+		}
+		inFile.close();
+	}
+
+
 	class Borrower {
 	private:
 		string id;
@@ -107,18 +137,19 @@
 		}
 	};
 
-	void return_book() {
+	void return_book(string file) {
 		string borrowerID;
 		cout << "Enter the borrower's ID: ";
 		getline(cin, borrowerID);
 
 		// Check if the borrower ID is valid and if the borrower has borrowed any books
+		readline(file, borrowerID);
 		// If not, display an appropriate message and return
 
 		string bookID;
 		char userChoice;
 		do {
-			cout << "Enter the book ID: ";
+			cout << "Enter the returning book ID: ";
 			getline(cin, bookID);
 
 			// Check if the borrower has borrowed the book
@@ -146,6 +177,21 @@
 		else {
 			cout << "No borrower list is imported";
 		}
+		//
+		cout << "Import borrower list from file? [Y/N]: ";
+		cin >> answer;
+		cin.ignore();
+		if (tolower(answer) == 'y') {
+			cout << "Input path to CSV file: ";
+			getline(cin, filename);
+			readCSV(filename);
+		}
+		else {
+			cout << "No borrower list is imported";
+		}
+
+		return_book(filename);
+
 		return 0;
 	}
 
