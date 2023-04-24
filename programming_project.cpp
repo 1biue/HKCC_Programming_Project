@@ -5,7 +5,6 @@
 
 	using namespace std;
 
-
 	int extractFields(string line, char fields[][101]) {
 		int numFields = 0;
 		bool inQuotes = false;
@@ -58,7 +57,7 @@
 		inFile.close();
 	}
 
-	void readline(string filename, string info) {//modify form above
+	int readline(string filename, string info) {//modify form above
 		fstream inFile;
 		string line;
 		char fields[10][101] = {};
@@ -67,7 +66,6 @@
 		inFile.open(filename);
 		if (!inFile.is_open()) {
 			cout << "Cannot open file \"" << filename << "\"\n";
-			return;
 		}
 		while (getline(inFile, line, '\n')) {
 			numFields = extractFields(line, fields);
@@ -79,12 +77,13 @@
 			}
 		}
 		if (countRecords == 0) {
-			cout << "No records found";
+			cout << "No_record";
 		}
 		else {
 			printf(" %i record(s) found by %s \n", countRecords, info.c_str());
 		}
 		inFile.close();
+		return countRecords;
 	}
 
 
@@ -143,7 +142,11 @@
 		getline(cin, borrowerID);
 
 		// Check if the borrower ID is valid and if the borrower has borrowed any books
-		readline(file, borrowerID);
+		int numRecords = readline(file, borrowerID);
+		if (numRecords == 0) {
+			cout << "No record found for borrower ID " << borrowerID << endl;
+			return;
+		}
 		// If not, display an appropriate message and return
 
 		string bookID;
