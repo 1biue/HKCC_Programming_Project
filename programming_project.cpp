@@ -195,6 +195,72 @@
 		}
 	}
 
+	void add_ID(const string& filename) {
+	    fstream inFile;
+	    fstream outFile;
+	    string line;
+	    char fields[10][101] = {};
+	    int numFields;
+	    bool found = false;
+	    int rowNumber = 0;
+	    int errorCount = 0;
+
+	    inFile.open(filename);
+	    if (!inFile.is_open()) {
+		cout << "Cannot open file \"" << filename << "\"\n";
+		return;
+	    }
+
+	    string outputFilename = "temp_" + filename;
+	    outFile.open(outputFilename, ios::out);
+	    if (!outFile.is_open()) {
+		cout << "Cannot create temporary file \"" << outputFilename << "\"\n";
+		inFile.close();
+		return;
+	    }
+
+	    while (getline(inFile, line, '\n')) {
+		numFields = extractFields(line, fields);
+		if (numFields == 3) {
+		    found = true;
+		    char id[10];
+		    snprintf(id, sizeof(id), "HKCC%04d", rowNumber);
+		    string updatedLine = id;
+		    for (int i = 0; i < numFields; ++i) {
+			updatedLine += "," + string(fields[i]);
+		    }
+		    updatedLine += ",0"; // Add a default 0 column at the end
+		    line = updatedLine;
+		} else if (numFields != 5) {
+		    errorCount++;
+		}
+		outFile << line << "\n";
+		rowNumber++;
+	    }
+
+	    inFile.close();
+	    outFile.close();
+
+	    if (errorCount > 0) {
+		cout << errorCount << " row(s) have data error.\n";
+	    }
+
+	    if (!found) {
+		cout << "No rows with 3 cells found.\n";
+		remove(outputFilename.c_str());
+	    }
+	    else {
+		remove(filename.c_str());
+		if (rename(outputFilename.c_str(), filename.c_str()) != 0) {
+		    cout << "Failed to update the file with the new data.\n";
+		}
+		else {
+		    cout << "Added ID and a default 0 column to all rows with 3 cells.\n";
+		}
+	    }
+	}
+
+
 	/// <summary>
 	/// file reading and editing
 	/// </summary>
