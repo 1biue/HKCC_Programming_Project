@@ -139,54 +139,55 @@
 	}
 
 	void remove_data(const string& bookID, const string& borrowerID, const string& filename) {
-	    fstream inFile;
-	    ofstream outFile;
-	    string line;
+		fstream inFile;
+		ofstream outFile;
+		string line;
 
-	    inFile.open(filename);
-	    if (!inFile.is_open()) {
-		cout << "Cannot open file \"" << filename << "\"\n";
-		return;
-	    }
+		inFile.open(filename);
+		if (!inFile.is_open()) {
+			cout << "Cannot open file \"" << filename << "\"\n";
+			return;
+		}
 
-	    string newFilename = "temp_" + filename;
-	    outFile.open(newFilename);
-	    if (!outFile.is_open()) {
-		cout << "Cannot open file \"" << newFilename << "\"\n";
+		string newFilename = "temp_" + filename;
+		outFile.open(newFilename);
+		if (!outFile.is_open()) {
+			cout << "Cannot open file \"" << newFilename << "\"\n";
+			inFile.close();
+			return;
+		}
+
+		bool found = false;
+
+		while (getline(inFile, line)) {
+			stringstream ss(line);
+			vector<string> fields;
+			string field;
+
+			while (getline(ss, field, ',')) {
+				fields.push_back(field);
+			}
+
+			if (fields[0] == bookID && fields[1] == borrowerID) {
+				found = true;
+				int fifthColumnValue = stoi(fields[4]);
+				if (fifthColumnValue >= 1) {
+					fifthColumnValue--;
+					fields[4] = to_string(fifthColumnValue);
+				}
+			}
+
+			for (size_t i = 0; i < fields.size(); ++i) {
+				outFile << fields[i];
+				if (i < fields.size() - 1) {
+					outFile << ",";
+				}
+			}
+			outFile << endl;
+		}
+
 		inFile.close();
-		return;
-	    }
-
-	    bool found = false;
-
-	    while (getline(inFile, line)) {
-		stringstream ss(line);
-		vector<string> fields;
-		string field;
-
-		while (getline(ss, field, ',')) {
-		    fields.push_back(field);
-		}
-
-		if (fields[0] == bookID && fields[1] == borrowerID) {
-		    found = true;
-		    int fifthColumnValue = stoi(fields[4]);
-		    if (fifthColumnValue >= 1) {
-			fifthColumnValue--;
-			fields[4] = to_string(fifthColumnValue);
-		    }
-		}
-
-		for (size_t i = 0; i < fields.size(); ++i) {
-		    outFile << fields[i];
-		    if (i < fields.size() - 1) {
-			outFile << ",";
-		    }
-		}
-		outFile << endl;
-	    }
-
-	    inFile.close();
+	}
 
 	void add_ID(const string& filename) {
 	    fstream inFile;
@@ -233,10 +234,6 @@
 
 	    inFile.close();
 	    outFile.close();
-
-	    if (errorCount > 0) {
-		cout << errorCount << " row(s) have data error.\n";
-	    }
 
 	    if (!found) {
 		cout << "No rows with 3 cells found.\n";
