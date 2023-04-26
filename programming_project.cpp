@@ -69,7 +69,7 @@
 		}
 		while (getline(inFile, line, '\n')) {
 			numFields = extractFields(line, fields);
-			if (numFields > 0 && strcmp(fields[2], info.c_str()) == 0) {
+			if (numFields > 0 && strcmp(fields[0], info.c_str()) == 0) {
 				for (int i = 0; i < numFields; i++)
 					cout << i << ": " << fields[i] << endl;
 				cout << "\n";
@@ -110,7 +110,7 @@
 
 		while (getline(inFile, line, '\n')) {
 			numFields = extractFields(line, fields);
-			if (numFields > 0 && strcmp(fields[2], user_id.c_str()) == 0) {
+			if (numFields > 0 && strcmp(fields[0], user_id.c_str()) == 0) {
 				found = true;
 				line += "," + adding_info;
 			}
@@ -161,7 +161,7 @@
 		while (getline(inFile, line, '\n')) {
 			numFields = extractFields(line, fields);
 			string updatedLine = "";
-			if (numFields > 0 && strcmp(fields[2], user_id.c_str()) == 0) {
+			if (numFields > 0 && strcmp(fields[0], user_id.c_str()) == 0) {
 				for (int i = 0; i < numFields; i++) {
 					if (strcmp(fields[i], user_input.c_str()) != 0) {
 						updatedLine += string(fields[i]) + (i < numFields - 1 ? "," : "");
@@ -229,7 +229,7 @@
 		    for (int i = 0; i < numFields; ++i) {
 			updatedLine += "," + string(fields[i]);
 		    }
-		    updatedLine += ",0"; // Add a default 0 column at the end
+		    updatedLine += ",0"; 
 		    line = updatedLine;
 		} else if (numFields != 5) {
 		    errorCount++;
@@ -314,7 +314,7 @@
 		}
 	};
 
-	void return_book(string file) {
+	void return_book(string file) {//22177271a La Yu Fung
 		string borrowerID;
 		cout << "Enter the borrower's ID: ";
 		cin >> borrowerID;
@@ -368,6 +368,7 @@
 		if (tolower(answer) == 'y') {
 			cout << "Input path to CSV file: ";
 			getline(cin, filename_borrow);
+			add_ID(filename_borrow);
 			readCSV(filename_borrow);
 		}
 		else {
