@@ -69,7 +69,7 @@
 		}
 		while (getline(inFile, line, '\n')) {
 			numFields = extractFields(line, fields);
-			if (numFields > 0 && strcmp(fields[3], info.c_str()) == 0) {
+			if (numFields > 0 && strcmp(fields[2], info.c_str()) == 0) {
 				for (int i = 0; i < numFields; i++)
 					cout << i << ": " << fields[i] << endl;
 				cout << "\n";
@@ -86,6 +86,58 @@
 		return countRecords;
 	}
 
+	void add_data(const string& adding_info, const string& user_id, const string& filename) {
+		fstream inFile;
+		fstream outFile;
+		string line;
+		char fields[10][101] = {};
+		int numFields;
+		bool found = false;
+
+		inFile.open(filename);
+		if (!inFile.is_open()) {
+			cout << "Cannot open file \"" << filename << "\"\n";
+			return;
+		}
+
+		string outputFilename = "temp_" + filename;
+		outFile.open(outputFilename, ios::out);
+		if (!outFile.is_open()) {
+			cout << "Cannot create temporary file \"" << outputFilename << "\"\n";
+			inFile.close();
+			return;
+		}
+
+		while (getline(inFile, line, '\n')) {
+			numFields = extractFields(line, fields);
+			if (numFields > 0 && strcmp(fields[2], user_id.c_str()) == 0) {
+				found = true;
+				line += "," + adding_info;
+			}
+			outFile << line << "\n";
+		}
+
+		inFile.close();
+		outFile.close();
+
+		if (!found) {
+			cout << "No record found with user ID: " << user_id << "\n";
+			remove(outputFilename.c_str());
+		}
+		else {
+			remove(filename.c_str());
+			if (rename(outputFilename.c_str(), filename.c_str()) != 0) {
+				cout << "Failed to update the file with the new data.\n";
+			}
+			else {
+				cout << "Added data to user ID: " << user_id << "\n";
+			}
+		}
+
+	}
+	/// <summary>
+	/// file reading and editing
+	/// </summary>
 
 	class Borrower {
 	private:
@@ -139,7 +191,7 @@
 	void return_book(string file) {
 		string borrowerID;
 		cout << "Enter the borrower's ID: ";
-		getline(cin, borrowerID);
+		cin >> borrowerID;
 
 		// Check if the borrower ID is valid and if the borrower has borrowed any books
 		int numRecords = readline(file, borrowerID);
@@ -227,7 +279,7 @@
 				//
 				break;
 			case 7:
-				//
+				exit(0);
 				break;
 			default:
 				cout << "Enter number between 1-7 only \n"
@@ -235,6 +287,9 @@
 					"Option(1 - 7) :";
 				cin >> mode;
 			}
+			cout << "********************************* \n"
+				"Option(1 - 7) :";
+			cin >> mode;
 		}
 		return 0;
 	}
