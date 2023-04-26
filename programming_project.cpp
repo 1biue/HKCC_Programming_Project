@@ -139,55 +139,73 @@
 	}
 
 	void remove_data(const string& bookID, const string& borrowerID, const string& filename) {
-		fstream inFile;
-		ofstream outFile;
-		string line;
+	    ifstream inFile(filename);
+	    if (!inFile.is_open()) {
+		cout << "Cannot open file \"" << filename << "\"\n";
+		return;
+	    }
 
-		inFile.open(filename);
-		if (!inFile.is_open()) {
-			cout << "Cannot open file \"" << filename << "\"\n";
-			return;
+	    vector<string> lines;
+	    string line;
+	    bool found = false;
+
+	    // Read the file line by line
+	    while (getline(inFile, line)) {
+		stringstream ss(line);
+		string field;
+		getline(ss, field, ','); // Assuming the book ID is the first field
+
+		if (field == bookID) {
+		    found = true;
+
+		    vector<string> fields;
+		    fields.push_back(field);
+
+		    // Read the remaining fields in the row
+		    while (getline(ss, field, ',')) {
+			fields.push_back(field);
+		    }
+
+		    // Update the values in the five columns
+		    for (size_t i = 0; i < 5; ++i) {
+			int value = stoi(fields[i + 1]); // Assuming the five columns start from the second field
+			if (value >= 1) {
+			    --value;
+			}
+			fields[i + 1] = to_string(value);
+		    }
+
+		    // Reconstruct the updated line
+		    line = fields[0];
+		    for (size_t i = 1; i < fields.size(); ++i) {
+			line += "," + fields[i];
+		    }
 		}
 
-		string newFilename = "temp_" + filename;
-		outFile.open(newFilename);
-		if (!outFile.is_open()) {
-			cout << "Cannot open file \"" << newFilename << "\"\n";
-			inFile.close();
-			return;
-		}
+		lines.push_back(line);
+	    }
 
-		bool found = false;
+	    inFile.close();
 
-		while (getline(inFile, line)) {
-			stringstream ss(line);
-			vector<string> fields;
-			string field;
+	    if (!found) {
+		cout << "No record found for book ID " << bookID << " and borrower ID " << borrowerID << endl;
+		return;
+	    }
 
-			while (getline(ss, field, ',')) {
-				fields.push_back(field);
-			}
+	    // Write the updated lines back to the file
+	    ofstream outFile(filename);
+	    if (!outFile.is_open()) {
+		cout << "Cannot open file \"" << filename << "\"\n";
+		return;
+	    }
 
-			if (fields[0] == bookID && fields[1] == borrowerID) {
-				found = true;
-				int fifthColumnValue = stoi(fields[4]);
-				if (fifthColumnValue >= 1) {
-					fifthColumnValue--;
-					fields[4] = to_string(fifthColumnValue);
-				}
-			}
+	    for (const string& updatedLine : lines) {
+		outFile << updatedLine << endl;
+	    }
 
-			for (size_t i = 0; i < fields.size(); ++i) {
-				outFile << fields[i];
-				if (i < fields.size() - 1) {
-					outFile << ",";
-				}
-			}
-			outFile << endl;
-		}
-
-		inFile.close();
+	    outFile.close();
 	}
+
 
 	void add_ID(const string& filename) {
 	    fstream inFile;
