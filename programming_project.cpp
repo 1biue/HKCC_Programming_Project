@@ -89,54 +89,65 @@
 	}
 
 	void add_data(const string& adding_info, const string& user_id, const string& filename) {
-		fstream inFile;
-		fstream outFile;
-		string line;
-		char fields[10][101] = {};
-		int numFields;
-		bool found = false;
+	    fstream inFile;
+	    fstream outFile;
+	    string line;
+	    char fields[10][101] = {};
+	    int numFields;
+	    bool found = false;
+	    int columnIndexToIncrement = 4;  // Set the index of the column you want to increment
 
-		inFile.open(filename);
-		if (!inFile.is_open()) {
-			cout << "Cannot open file \"" << filename << "\"\n";
-			return;
-		}
+	    inFile.open(filename);
+	    if (!inFile.is_open()) {
+		cout << "Cannot open file \"" << filename << "\"\n";
+		return;
+	    }
 
-		string outputFilename = "temp_" + filename;
-		outFile.open(outputFilename, ios::out);
-		if (!outFile.is_open()) {
-			cout << "Cannot create temporary file \"" << outputFilename << "\"\n";
-			inFile.close();
-			return;
-		}
-
-		while (getline(inFile, line, '\n')) {
-			numFields = extractFields(line, fields);
-			if (numFields > 0 && strcmp(fields[0], user_id.c_str()) == 0) {
-				found = true;
-				line += "," + adding_info;
-			}
-			outFile << line << "\n";
-		}
-
+	    string outputFilename = "temp_" + filename;
+	    outFile.open(outputFilename, ios::out);
+	    if (!outFile.is_open()) {
+		cout << "Cannot create temporary file \"" << outputFilename << "\"\n";
 		inFile.close();
-		outFile.close();
+		return;
+	    }
 
-		if (!found) {
-			cout << "No record found with user ID: " << user_id << "\n";
-			remove(outputFilename.c_str());
-		}
-		else {
-			remove(filename.c_str());
-			if (rename(outputFilename.c_str(), filename.c_str()) != 0) {
-				cout << "Failed to update the file with the new data.\n";
+	    while (getline(inFile, line, '\n')) {
+		numFields = extractFields(line, fields);
+		string updatedLine = "";
+		if (numFields > 0 && strcmp(fields[0], user_id.c_str()) == 0) {
+		    found = true;
+		    for (int i = 0; i < numFields; i++) {
+			if (i == columnIndexToIncrement) {
+			    int value = stoi(fields[i]);
+			    value += 1;
+			    updatedLine += to_string(value) + (i < numFields - 1 ? "," : "");
+			} else {
+			    updatedLine += string(fields[i]) + (i < numFields - 1 ? "," : "");
 			}
-			else {
-				cout << "Added data to user ID: " << user_id << "\n";
-			}
+		    }
+		    updatedLine += "," + adding_info;
+		} else {
+		    updatedLine = line;
 		}
+		outFile << updatedLine << "\n";
+	    }
 
+	    inFile.close();
+	    outFile.close();
+
+	    if (!found) {
+		cout << "No record found with user ID: " << user_id << "\n";
+		remove(outputFilename.c_str());
+	    } else {
+		remove(filename.c_str());
+		if (rename(outputFilename.c_str(), filename.c_str()) != 0) {
+		    cout << "Failed to update the file with the new data.\n";
+		} else {
+		    cout << "Added data to user ID: " << user_id << "\n";
+		}
+	    }
 	}
+
 
 	void remove_data(const string& user_input, const string& user_id, const string& filename) {
 	    fstream inFile;
