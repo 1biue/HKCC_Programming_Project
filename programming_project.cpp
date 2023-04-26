@@ -138,72 +138,65 @@
 
 	}
 
-	void remove_data(const string& bookID, const string& borrowerID, const string& filename) {
-	    ifstream inFile(filename);
+	void remove_data(const string& user_input, const string& user_id, const string& filename, int updateColumns) {
+	    fstream inFile;
+	    fstream outFile;
+	    string line;
+	    char fields[10][101] = {};
+	    int numFields;
+	    bool found = false;
+
+	    inFile.open(filename);
 	    if (!inFile.is_open()) {
 		cout << "Cannot open file \"" << filename << "\"\n";
 		return;
 	    }
 
-	    vector<string> lines;
-	    string line;
-	    bool found = false;
+	    string outputFilename = "temp_" + filename;
+	    outFile.open(outputFilename, ios::out);
+	    if (!outFile.is_open()) {
+		cout << "Cannot create temporary file \"" << outputFilename << "\"\n";
+		inFile.close();
+		return;
+	    }
 
-	    // Read the file line by line
-	    while (getline(inFile, line)) {
-		stringstream ss(line);
-		string field;
-		getline(ss, field, ','); // Assuming the book ID is the first field
-
-		if (field == bookID) {
-		    found = true;
-
-		    vector<string> fields;
-		    fields.push_back(field);
-
-		    // Read the remaining fields in the row
-		    while (getline(ss, field, ',')) {
-			fields.push_back(field);
-		    }
-
-		    // Update the values in the five columns
-		    for (size_t i = 0; i < 5; ++i) {
-			int value = stoi(fields[i + 1]); // Assuming the five columns start from the second field
-			if (value >= 1) {
-			    --value;
+	    while (getline(inFile, line, '\n')) {
+		numFields = extractFields(line, fields);
+		string updatedLine = "";
+		if (numFields > 0 && strcmp(fields[2], user_id.c_str()) == 0) {
+		    for (int i = 0; i < numFields; i++) {
+			if (strcmp(fields[i], user_input.c_str()) != 0) {
+			    if (i < updateColumns) { // Check if the current column should be updated
+				int value = stoi(fields[i]) - 1;
+				updatedLine += to_string(value) + (i < numFields - 1 ? "," : "");
+			    } else {
+				updatedLine += string(fields[i]) + (i < numFields - 1 ? "," : "");
+			    }
 			}
-			fields[i + 1] = to_string(value);
 		    }
-
-		    // Reconstruct the updated line
-		    line = fields[0];
-		    for (size_t i = 1; i < fields.size(); ++i) {
-			line += "," + fields[i];
+		    if (updatedLine.length() != line.length()) {
+			found = true;
 		    }
+		} else {
+		    updatedLine = line;
 		}
-
-		lines.push_back(line);
+		outFile << updatedLine << "\n";
 	    }
 
 	    inFile.close();
+	    outFile.close();
 
 	    if (!found) {
-		cout << "No record found for book ID " << bookID << " and borrower ID " << borrowerID << endl;
-		return;
+		cout << "No record found with user ID: " << user_id << " and user input: " << user_input << "\n";
+		remove(outputFilename.c_str());
+	    } else {
+		remove(filename.c_str());
+		if (rename(outputFilename.c_str(), filename.c_str()) != 0) {
+		    cout << "Failed to update the file with the new data.\n";
+		} else {
+		    cout << "Removed data from user ID: " << user_id << "\n";
+		}
 	    }
-
-	    // Write the updated lines back to the file
-	    ofstream outFile(filename);
-	    if (!outFile.is_open()) {
-		cout << "Cannot open file \"" << filename << "\"\n";
-		return;
-	    }
-
-	    for (const string& updatedLine : lines) {
-		outFile << updatedLine << endl;
-	    }
-
-	    outFile.close();
 	}
 
 
