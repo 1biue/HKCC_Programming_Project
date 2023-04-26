@@ -2,8 +2,42 @@
 	#include <fstream>	// for file input/output
 	#include <string>
 	#include <vector>
+    #include <algorithm>
+    #include <sstream>
 
 	using namespace std;
+	
+	struct Book {
+		string id;
+		string title;
+		string author;
+		string publisher;
+		int year;
+		bool available;
+	};
+	bool compareTitle(const Book& book1, const Book& book2) {
+		return book1.title < book2.title;
+	}
+	void displayBooks(const vector<Book>& books) {
+		cout << setw(12) << "ID" << setw(50) << "Book Details" << setw(15) << "Availability" << endl;
+		for (const auto& book : books) {
+			cout << setw(12) << book.id << setw(50) << book.title + " by " + book.author + ", " + book.publisher + ", " + to_string(book.year) << setw(15) << (book.available ? "Available" : "Not available") << endl;
+		}
+	}
+
+	int main() {
+		vector<Book> books = {
+			{"CH6717212", "10 Little Indians", "Agatha Christie", "Pocket", 1982, true},
+			{"NY8167261", "102 School Cafeteria Jokes", "Morgan Matthews", "Troll Communications Llc", 1992, true},
+			{"MJ1586212", "2nd Chance", "James Patterson", "Time Warner Audio Major", 2002, true},
+			{"MJ8118129", "52 Ways to Make a Difference", "Lynn Gordon", "Chronicle Books", 1996, true},
+		};
+
+		// Display books
+		displayBooks(books);
+
+		return 0;
+	}
 
 	int extractFields(string line, char fields[][101]) {
 		int numFields = 0;
