@@ -39,7 +39,7 @@ public:
 		this->available = true;
     }
 
-    string getBookId()
+    string getId()
     {
         return bookid;
     }
@@ -68,6 +68,11 @@ public:
     {
         return available;
     }
+
+	void setAvailability(bool available)
+	{
+		this->available = available;
+	}
 
     string getBorrower()
     {
@@ -224,11 +229,24 @@ public:
 		return -1; // If not found
 	}
 
+	int findBookBybookId(vector<book>& books, const string& userId) {
+		
+		vector<book>::iterator it;
+
+		for (it = books.begin(); it != books.end(); it++) {
+			if (it -> getId() == userId) {
+				return it - books.begin();
+			}
+		}
+
+		return -1; // If not found
+	}
+
 	/// <summary>
 	/// file reading and editing
 	/// </summary>
 
-	void returnbook(const string& file, const borrower* borrowers, int numBorrowers) {//R4
+	void returnbook(const string& file, borrower* borrowers, int numBorrowers, vector<book>& books, int numofbook) {//R4
 		string userId;
 		string bookid;
 		cout << "*********************************\n"
@@ -240,7 +258,7 @@ public:
 
 		if (index >= 0) {
 			cout << "Borrower with user ID " << userId << " found: " << endl;
-			cout<< "Borrower_ID:" << borrowers[index].borrowid
+			cout << "Borrower_ID:" << borrowers[index].borrowid
 				<< "Lastname: " << borrowers[index].lastname
 				<< ", Firstname: " << borrowers[index].firstname
 				<< ", Number: " << borrowers[index].number
@@ -253,15 +271,36 @@ public:
 		cin >> bookid;
 
 		// Check if the borrower has borrowed the book
-		
-		// If yes, update the book's availability and remove the book from the borrower's list of borrowed books
+		vector<book>::iterator it;
+		for (it = books.begin(); it != books.end(); it++) {
+			if (it->getId() == bookid) {
+				if (it->getBorrower() == userId) {
+					it->setBorrower("");
+					it->setAvailability(true);
+					borrowers[index].borrow -= 1;
+					cout << "Book returned successfully." << endl;
+				}
+				else {
+					cout << "Book not borrowed by this borrower." << endl;
+				}
+				return;
+			}
+		}
 
 		cout << "Do you want to enter another book ID? (Y/N): ";
+		string ynn;
+		cin >> ynn;
+		if (ynn == "n") {
+			return;
+		}
 	}
+
+
+    int numOfBooksRead = 0;
+	vector<book> books;
 
 void readBookCSV(string filename)
 {
-	vector<book> books;
     int numLines = countLines(filename);
     if (numLines < 0)
     {
@@ -280,7 +319,6 @@ void readBookCSV(string filename)
     string line;
     char fields[10][101] = {};
     int numFields;
-    int countRecords = 0;
 
     while (getline(inFile, line, '\n'))
     {
@@ -297,12 +335,12 @@ void readBookCSV(string filename)
             books.push_back(b);
         }
 
-        countRecords++;
+        numOfBooksRead++;
     }
 
     inFile.close();
 
-    cout << "Read " << countRecords << " records from file \"" << filename << "\"\n";
+    cout << "Read " << numOfBooksRead << " records from file \"" << filename << "\"\n";
 }
 
 void removeBorrowerById(borrower*& borrowers, int& numBorrowers, const string& userId) {//R2.4
@@ -398,7 +436,7 @@ void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 				"Option (1 - 5):";
 			break;
 		case 5:
-			return;
+		//
 			break;
 		default:
 			cout << "Enter number between 1-5 only \n"
@@ -528,7 +566,7 @@ void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 				
 				break;
 			case 4:
-				returnbook(filename_borrow, borrowers, numBorrowers);
+				returnbook(filename_borrow, borrowers, numBorrowers, books, numOfBooksRead);
 				break;
 			case 5:
 				//
