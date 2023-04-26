@@ -135,6 +135,66 @@
 		}
 
 	}
+
+	void remove_data(const string& user_input, const string& user_id, const string& filename) {
+		fstream inFile;
+		fstream outFile;
+		string line;
+		char fields[10][101] = {};
+		int numFields;
+		bool found = false;
+
+		inFile.open(filename);
+		if (!inFile.is_open()) {
+			cout << "Cannot open file \"" << filename << "\"\n";
+			return;
+		}
+
+		string outputFilename = "temp_" + filename;
+		outFile.open(outputFilename, ios::out);
+		if (!outFile.is_open()) {
+			cout << "Cannot create temporary file \"" << outputFilename << "\"\n";
+			inFile.close();
+			return;
+		}
+
+		while (getline(inFile, line, '\n')) {
+			numFields = extractFields(line, fields);
+			string updatedLine = "";
+			if (numFields > 0 && strcmp(fields[2], user_id.c_str()) == 0) {
+				for (int i = 0; i < numFields; i++) {
+					if (strcmp(fields[i], user_input.c_str()) != 0) {
+						updatedLine += string(fields[i]) + (i < numFields - 1 ? "," : "");
+					}
+				}
+				if (updatedLine.length() != line.length()) {
+					found = true;
+				}
+			}
+			else {
+				updatedLine = line;
+			}
+			outFile << updatedLine << "\n";
+		}
+
+		inFile.close();
+		outFile.close();
+
+		if (!found) {
+			cout << "No record found with user ID: " << user_id << " and user input: " << user_input << "\n";
+			remove(outputFilename.c_str());
+		}
+		else {
+			remove(filename.c_str());
+			if (rename(outputFilename.c_str(), filename.c_str()) != 0) {
+				cout << "Failed to update the file with the new data.\n";
+			}
+			else {
+				cout << "Removed data from user ID: " << user_id << "\n";
+			}
+		}
+	}
+
 	/// <summary>
 	/// file reading and editing
 	/// </summary>
@@ -205,9 +265,10 @@
 		char userChoice;
 		do {
 			cout << "Enter the returning book ID: ";
-			getline(cin, bookID);
+			cin >> bookID;
 
 			// Check if the borrower has borrowed the book
+			remove_data(bookID, borrowerID, file);
 			// If yes, update the book's availability and remove the book from the borrower's list of borrowed books
 
 			cout << "Do you want to enter another book ID? (Y/N): ";
