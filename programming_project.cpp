@@ -353,6 +353,8 @@
 			"********************************* \n"
 			"Option(1 - 7) :";
 		cin >> mode;
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
 		while (true) {
 			switch (mode) {
@@ -378,13 +380,33 @@
 				//
 				break;
 			case 7:
-				exit(0);
+				char confirmExit;
+				do {
+					cout << "Are you sure you want to exit? (Y/N): ";
+					cin >> confirmExit;
+					confirmExit = tolower(confirmExit);
+					if (confirmExit == 'y') {
+						exit(0);
+					}
+					else if (confirmExit == 'n') {
+						cout << "********************************* \n"
+							"Option(1 - 7) :";
+						cin >> mode;
+						cin.clear();
+						cin.ignore(numeric_limits<streamsize>::max(), '\n');
+					}
+					else {
+						cout << "Invalid input. Please enter 'Y' or 'N'.\n";
+					}
+				} while (confirmExit != 'y' && confirmExit != 'n');
 				break;
 			default:
 				cout << "Enter number between 1-7 only \n"
 					"********************************* \n"
 					"Option(1 - 7) :";
 				cin >> mode;
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
 			}
 		}
 		return 0;
