@@ -280,6 +280,7 @@
 
 	int main() {
 		string filename;
+		string filename_borrow;
 		char answer;
 		int mode;
 
@@ -300,8 +301,8 @@
 		cin.ignore();
 		if (tolower(answer) == 'y') {
 			cout << "Input path to CSV file: ";
-			getline(cin, filename);
-			readCSV(filename);
+			getline(cin, filename_borrow);
+			readCSV(filename_borrow);
 		}
 		else {
 			cout << "No borrower list is imported \n";
@@ -331,7 +332,7 @@
 				//
 				break;
 			case 4:
-				return_book(filename);
+				return_book(filename_borrow);
 				cout << "********************************* \n"
 					"Option(1 - 7) :";
 				cin >> mode;
