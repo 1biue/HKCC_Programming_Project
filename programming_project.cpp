@@ -255,54 +255,59 @@
 	/// file reading and editing
 	/// </summary>
 
-	class Borrower {
-	private:
-		string id;
-		string name;
-		int quota;
-		vector<string> borrowedBooks;
+	void borrow_book(string file) {
+		string borrowerID;
+		cout << "Enter the borrower's ID: ";
+		cin >> borrowerID;
 
-	public:
-		Borrower(string i_d, string n_ame) {
-			i_d = id;
-			n_ame = name;
-			quota = 5; // Initialize quota to 5
+		// Check if the borrower ID is valid
+		int numRecords = readline(file, borrowerID);
+		if (numRecords == 0) {
+			cout << "No record found for borrower ID " << borrowerID << endl;
+			return;
 		}
 
-		// Get borrower ID
-		string getId() {
-			return id;
+		// Check if the borrower has reached the maximum number of borrowed books
+		int numBorrowedBooks = readline(file, borrowerID + ",1");
+		if (numBorrowedBooks >= 5) {
+			cout << "Borrower has already borrowed the maximum number of books." << endl;
+			return;
 		}
 
-		// Get borrower name
-		string getName() {
-			return name;
-		}
+		// Allow the user to input book IDs and borrow the books if they are available
+		string bookID;
+		int numBooksBorrowed = 0;
+		char userChoice;
+		do {
+			cout << "Enter the book ID: ";
+			cin >> bookID;
 
-		// Check if borrower has quota to borrow more books
-		bool canBorrow() {
-			return quota > 0;
-		}
-
-		// Get number of books borrowed by borrower
-		int getNumBorrowed() {
-			return borrowedBooks.size();
-		}
-
-		// Borrow a book
-		void borrowBook(string bookId) {
-			borrowedBooks.push_back(bookId);
-			quota--;
-		}
-
-		// Print list of borrowed books
-		void printBorrowedBooks() {
-			cout << "Borrowed books:" << endl;
-			for (string bookId : borrowedBooks) {
-				cout << bookId << endl;
+			// Check if the book ID is valid
+			int numRecords = readline(file, bookID);
+			if (numRecords == 0) {
+				cout << "No record found for book ID " << bookID << endl;
+				continue;
 			}
-		}
-	};
+
+			// Check if the book is available
+			numRecords = readline(file, bookID + ",0");
+			if (numRecords == 0) {
+				cout << "Book " << bookID << " is not available for borrowing." << endl;
+				continue;
+			}
+
+			// Update the book's availability and add the book to the borrower's list of borrowed books
+			add_data(borrowerID + "," + bookID, borrowerID, file);
+			numBooksBorrowed++;
+
+			cout << "Do you want to borrow another book? (Y/N): ";
+			cin >> userChoice;
+			cin.ignore();
+		} while (tolower(userChoice) == 'y' && numBooksBorrowed + numBorrowedBooks < 5);
+
+		// Display the main menu
+		display_menu(file);
+	}
 
 	void return_book(string file) {//22177271a La Yu Fung
 		string borrowerID;
@@ -388,7 +393,7 @@
 				//
 				break;
 			case 3:
-				//
+				borrow_book();
 				break;
 			case 4:
 				return_book(filename_borrow);
