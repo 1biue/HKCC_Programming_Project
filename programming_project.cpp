@@ -138,13 +138,14 @@
 
 	}
 
-	void remove_data(const string& user_input, const string& user_id, const string& filename, int updateColumns) {
+	void remove_data(const string& user_input, const string& user_id, const string& filename) {
 	    fstream inFile;
 	    fstream outFile;
 	    string line;
 	    char fields[10][101] = {};
 	    int numFields;
 	    bool found = false;
+	    int columnIndexToDecrement = 4;  // Set the index of the column you want to decrement
 
 	    inFile.open(filename);
 	    if (!inFile.is_open()) {
@@ -166,8 +167,11 @@
 		if (numFields > 0 && strcmp(fields[2], user_id.c_str()) == 0) {
 		    for (int i = 0; i < numFields; i++) {
 			if (strcmp(fields[i], user_input.c_str()) != 0) {
-			    if (i < updateColumns) { // Check if the current column should be updated
-				int value = stoi(fields[i]) - 1;
+			    if (i == columnIndexToDecrement) {
+				int value = stoi(fields[i]);
+				if (value >= 1) {
+				    value -= 1;
+				}
 				updatedLine += to_string(value) + (i < numFields - 1 ? "," : "");
 			    } else {
 				updatedLine += string(fields[i]) + (i < numFields - 1 ? "," : "");
@@ -177,7 +181,8 @@
 		    if (updatedLine.length() != line.length()) {
 			found = true;
 		    }
-		} else {
+		}
+		else {
 		    updatedLine = line;
 		}
 		outFile << updatedLine << "\n";
@@ -189,15 +194,18 @@
 	    if (!found) {
 		cout << "No record found with user ID: " << user_id << " and user input: " << user_input << "\n";
 		remove(outputFilename.c_str());
-	    } else {
+	    }
+	    else {
 		remove(filename.c_str());
 		if (rename(outputFilename.c_str(), filename.c_str()) != 0) {
 		    cout << "Failed to update the file with the new data.\n";
-		} else {
+		}
+		else {
 		    cout << "Removed data from user ID: " << user_id << "\n";
 		}
 	    }
 	}
+
 
 
 	void add_ID(const string& filename) {
