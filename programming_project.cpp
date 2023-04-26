@@ -332,6 +332,9 @@
 				break;
 			case 4:
 				return_book(filename);
+				cout << "********************************* \n"
+					"Option(1 - 7) :";
+				cin >> mode;
 				break;
 			case 5:
 				//
@@ -348,9 +351,6 @@
 					"Option(1 - 7) :";
 				cin >> mode;
 			}
-			cout << "********************************* \n"
-				"Option(1 - 7) :";
-			cin >> mode;
 		}
 		return 0;
 	}
