@@ -136,64 +136,55 @@
 
 	}
 
-	void remove_data(const string& user_input, const string& user_id, const string& filename) {
-		fstream inFile;
-		fstream outFile;
-		string line;
-		char fields[10][101] = {};
-		int numFields;
-		bool found = false;
+	void remove_data(const string& bookID, const string& borrowerID, const string& filename) {
+	    fstream inFile;
+	    ofstream outFile;
+	    string line;
 
-		inFile.open(filename);
-		if (!inFile.is_open()) {
-			cout << "Cannot open file \"" << filename << "\"\n";
-			return;
-		}
+	    inFile.open(filename);
+	    if (!inFile.is_open()) {
+		cout << "Cannot open file \"" << filename << "\"\n";
+		return;
+	    }
 
-		string outputFilename = "temp_" + filename;
-		outFile.open(outputFilename, ios::out);
-		if (!outFile.is_open()) {
-			cout << "Cannot create temporary file \"" << outputFilename << "\"\n";
-			inFile.close();
-			return;
-		}
-
-		while (getline(inFile, line, '\n')) {
-			numFields = extractFields(line, fields);
-			string updatedLine = "";
-			if (numFields > 0 && strcmp(fields[0], user_id.c_str()) == 0) {
-				for (int i = 0; i < numFields; i++) {
-					if (strcmp(fields[i], user_input.c_str()) != 0) {
-						updatedLine += string(fields[i]) + (i < numFields - 1 ? "," : "");
-					}
-				}
-				if (updatedLine.length() != line.length()) {
-					found = true;
-				}
-			}
-			else {
-				updatedLine = line;
-			}
-			outFile << updatedLine << "\n";
-		}
-
+	    string newFilename = "temp_" + filename;
+	    outFile.open(newFilename);
+	    if (!outFile.is_open()) {
+		cout << "Cannot open file \"" << newFilename << "\"\n";
 		inFile.close();
-		outFile.close();
+		return;
+	    }
 
-		if (!found) {
-			cout << "No record found with user ID: " << user_id << " and user input: " << user_input << "\n";
-			remove(outputFilename.c_str());
+	    bool found = false;
+
+	    while (getline(inFile, line)) {
+		stringstream ss(line);
+		vector<string> fields;
+		string field;
+
+		while (getline(ss, field, ',')) {
+		    fields.push_back(field);
 		}
-		else {
-			remove(filename.c_str());
-			if (rename(outputFilename.c_str(), filename.c_str()) != 0) {
-				cout << "Failed to update the file with the new data.\n";
-			}
-			else {
-				cout << "Removed data from user ID: " << user_id << "\n";
-			}
+
+		if (fields[0] == bookID && fields[1] == borrowerID) {
+		    found = true;
+		    int fifthColumnValue = stoi(fields[4]);
+		    if (fifthColumnValue >= 1) {
+			fifthColumnValue--;
+			fields[4] = to_string(fifthColumnValue);
+		    }
 		}
-	}
+
+		for (size_t i = 0; i < fields.size(); ++i) {
+		    outFile << fields[i];
+		    if (i < fields.size() - 1) {
+			outFile << ",";
+		    }
+		}
+		outFile << endl;
+	    }
+
+	    inFile.close();
 
 	void add_ID(const string& filename) {
 	    fstream inFile;
