@@ -164,7 +164,7 @@
 	    while (getline(inFile, line, '\n')) {
 		numFields = extractFields(line, fields);
 		string updatedLine = "";
-		if (numFields > 0 && strcmp(fields[2], user_id.c_str()) == 0) {
+		if (numFields > 0 && strcmp(fields[0], user_id.c_str()) == 0) {
 		    for (int i = 0; i < numFields; i++) {
 			if (strcmp(fields[i], user_input.c_str()) != 0) {
 			    if (i == columnIndexToDecrement) {
@@ -325,7 +325,7 @@
 		} while (tolower(userChoice) == 'y' && numBooksBorrowed + numBorrowedBooks < 5);
 
 		// Display the main menu
-		display_menu(file);
+		
 	}
 
 	void return_book(string file) {//22177271a La Yu Fung
@@ -412,7 +412,7 @@
 				//
 				break;
 			case 3:
-				borrow_book();
+				
 				break;
 			case 4:
 				return_book(filename_borrow);
