@@ -168,6 +168,7 @@
 	int main() {
 		string filename;
 		char answer;
+		int mode;
 
 		cout << "Import book list from file? [Y/N]: ";
 		cin >> answer;
@@ -178,7 +179,7 @@
 			readCSV(filename);
 		}
 		else {
-			cout << "No borrower list is imported";
+			cout << "No borrower list is imported \n";
 		}
 		//
 		cout << "Import borrower list from file? [Y/N]: ";
@@ -190,11 +191,51 @@
 			readCSV(filename);
 		}
 		else {
-			cout << "No borrower list is imported";
+			cout << "No borrower list is imported \n";
 		}
 
-		return_book(filename);
+		cout << "*** Library Management System *** \n"
+			"[1] Manage books \n"
+			"[2] Manage borrowers \n"
+			"[3] Borrow book(s) \n"
+			"[4] Return book(s) \n"
+			"[5] Useful feature(s) added \n"
+			"[6] Member List \n"
+			"[7] Exit \n"
+			"********************************* \n"
+			"Option(1 - 7) :";
+		cin >> mode;
 
+		while (true) {
+			switch (mode) {
+			case 1:
+				//
+				break;
+			case 2:
+				//
+				break;
+			case 3:
+				//
+				break;
+			case 4:
+				return_book(filename);
+				break;
+			case 5:
+				//
+				break;
+			case 6:
+				//
+				break;
+			case 7:
+				//
+				break;
+			default:
+				cout << "Enter number between 1-7 only \n"
+					"********************************* \n"
+					"Option(1 - 7) :";
+				cin >> mode;
+			}
+		}
 		return 0;
 	}
 
