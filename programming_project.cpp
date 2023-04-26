@@ -1,11 +1,91 @@
-	#include <iostream>
-	#include <fstream>
-	#include <sstream>
-	#include <vector>
-	#include <string>
-	#include <algorithm>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <string>
+#include <iomanip>
+#include <algorithm>
 
-	using namespace std;
+struct borrower {
+	std::string borrowid;
+	std::string lastname;
+	std::string firstname;
+	std::string number;
+	int borrow;
+};
+
+using namespace std;
+
+class book
+{
+private:
+    string bookid;
+    string title;
+    string author;
+    string publisher;
+    int year;
+    bool available;
+    string borrower;
+    int borrowCount = 0;
+
+public:
+    book(string bookid, string title, string author, string publisher, int year)
+    {
+        this->bookid = bookid;
+        this->title = title;
+        this->author = author;
+        this->publisher = publisher;
+        this->year = year;
+		this->available = true;
+    }
+
+    string getBookId()
+    {
+        return bookid;
+    }
+
+    string getTitle()
+    {
+        return title;
+    }
+
+    string getAuthor()
+    {
+        return author;
+    }
+
+    string getPublisher()
+    {
+        return publisher;
+    }
+
+    int getYear()
+    {
+        return year;
+    }
+
+    bool isAvailable()
+    {
+        return available;
+    }
+
+    string getBorrower()
+    {
+        return borrower;
+    }
+
+    void setBorrower(string borrower)
+    {
+        this->borrower = borrower;
+    }
+
+	void incrementBorrowCount()
+	{
+		borrowCount++;
+	}
+};
+
+
 
 	int extractFields(string line, char fields[][101]) {
 		int numFields = 0;
@@ -18,7 +98,7 @@
 				inQuotes = !inQuotes;
 			}
 			else if (current == ',' && !inQuotes) {
-				strncpy_s(fields[numFields++], 101, field.c_str(), 100); 
+				strncpy_s(fields[numFields++], 101, field.c_str(), 100);
 				field.clear();
 			}
 			else {
@@ -26,31 +106,31 @@
 			}
 		}
 		if (!field.empty()) {
-			strncpy_s(fields[numFields++], 101, field.c_str(), 100); 
+			strncpy_s(fields[numFields++], 101, field.c_str(), 100);
 		}
 
 		return numFields;
 	}
 
 	void readCSV(string filename) {
-		fstream inFile;				
-		string line;				
-		char fields[10][101] = {};	
-		int numFields;				
-		int countRecords = 0;		
+		fstream inFile;                // for handling file
+		string line;                // for storing 1 line in a file
+		char fields[10][101] = {};    // for storing extracted fields (assume max. 10 fields per line, each field has max. 100 char)
+		int numFields;                // for storing number of fields per line
+		int countRecords = 0;        // for counting the number of records in csv file
 
 		inFile.open(filename);
 		if (!inFile.is_open()) {
-			cout << "Cannot open file \"" << filename << "\"\n";
+			cout << "Cannot open file "" << filename << ""\n";
 			return;
 		}
 
-		while (getline(inFile, line, '\n')) {				
-			numFields = extractFields(line, fields);		
+		while (getline(inFile, line, '\n')) {                // read line by line until end of file
+			numFields = extractFields(line, fields);        // call function to extract fields from the line
 
-			for (int i = 0; i < numFields; i++)				
-				cout << i << ": " << fields[i] << endl;		
-			cout << "\n\n";									
+			for (int i = 0; i < numFields; i++)                //  display the fields of this line
+				cout << i << ": " << fields[i] << endl;        //  you should modify this code for fields processing
+			cout << "\n\n";                                    // *** e.g. assign fields to data members of an object
 
 			countRecords++;
 		}
@@ -59,232 +139,280 @@
 		inFile.close();
 	}
 
-	int readline(string filename, string info) {//modify form above
+	int countLines(const string& filename) {
+		ifstream inFile(filename);
+		int count = 0;
+		string line;
+
+		if (!inFile.is_open()) {
+			cout << "Cannot open file \"" << filename << "\"\n";
+			return -1;
+		}
+
+		while (getline(inFile, line)) {
+			count++;
+		}
+
+		inFile.close();
+		return count;
+	}
+
+	int readCSV_borrow(string filename, borrower*& borrowers) {
+		int numLines = countLines(filename);
+		if (numLines < 0) {
+			return -1;
+		}
+
+		borrowers = new borrower[numLines];
+
 		fstream inFile;
 		string line;
 		char fields[10][101] = {};
 		int numFields;
 		int countRecords = 0;
+
+		
+
 		inFile.open(filename);
 		if (!inFile.is_open()) {
 			cout << "Cannot open file \"" << filename << "\"\n";
+			return -1;
 		}
+
 		while (getline(inFile, line, '\n')) {
 			numFields = extractFields(line, fields);
-			if (numFields > 0 && strcmp(fields[0], info.c_str()) == 0) {
-				for (int i = 0; i < numFields; i++)
-					cout << i << ": " << fields[i] << endl;
-				cout << "\n";
-				countRecords++;
+
+			if (numFields >= 3) {
+				stringstream id;
+				id << std::setw(4) << std::setfill('0') << countRecords;
+				std::string in_id = id.str();
+
+				borrower b;
+				b.borrowid = "HKCC" + in_id;
+				b.lastname = fields[0];
+				b.firstname = fields[1];
+				b.number = fields[2];
+				b.borrow = 0; // You can set this to a default value or read it from the CSV if available
+				borrowers[countRecords] = b;
 			}
+
+			countRecords++;
 		}
-		if (countRecords == 0) {
-			cout << "No_record";
-		}
-		else {
-			printf(" %i record(s) found by %s \n", countRecords, info.c_str());
-		}
+
+		cout << countRecords << " Record(s) imported.\n";
 		inFile.close();
+
+		// Print the borrower details
+		for (int i = 0; i < countRecords; i++) {
+			cout<< "Borrower_ID:" << borrowers[i].borrowid
+				<< "Lastname: " << borrowers[i].lastname
+				<< ", Firstname: " << borrowers[i].firstname
+				<< ", Number: " << borrowers[i].number
+				<< ", Borrow: " << borrowers[i].borrow << endl;
+		}
+
+
 		return countRecords;
 	}
 
-	void add_data(const string& adding_info, const string& user_id, const string& filename) {
-	    fstream inFile;
-	    fstream outFile;
-	    string line;
-	    char fields[10][101] = {};
-	    int numFields;
-	    bool found = false;
-	    int columnIndexToIncrement = 4;  // Set the index of the column you want to increment
-
-	    inFile.open(filename);
-	    if (!inFile.is_open()) {
-		cout << "Cannot open file \"" << filename << "\"\n";
-		return;
-	    }
-
-	    string outputFilename = "temp_" + filename;
-	    outFile.open(outputFilename, ios::out);
-	    if (!outFile.is_open()) {
-		cout << "Cannot create temporary file \"" << outputFilename << "\"\n";
-		inFile.close();
-		return;
-	    }
-
-	    while (getline(inFile, line, '\n')) {
-		numFields = extractFields(line, fields);
-		string updatedLine = "";
-		if (numFields > 0 && strcmp(fields[0], user_id.c_str()) == 0) {
-		    found = true;
-		    for (int i = 0; i < numFields; i++) {
-			if (i == columnIndexToIncrement) {
-			    int value = stoi(fields[i]);
-			    value += 1;
-			    updatedLine += to_string(value) + (i < numFields - 1 ? "," : "");
-			} else {
-			    updatedLine += string(fields[i]) + (i < numFields - 1 ? "," : "");
+	int findBorrowerByUserId(const borrower* borrowers, int numBorrowers, const string& userId) {
+		for (int i = 0; i < numBorrowers; i++) {
+			if (borrowers[i].borrowid == userId) {
+				return i;
 			}
-		    }
-		    updatedLine += "," + adding_info;
-		} else {
-		    updatedLine = line;
 		}
-		outFile << updatedLine << "\n";
-	    }
-
-	    inFile.close();
-	    outFile.close();
-
-	    if (!found) {
-		cout << "No record found with user ID: " << user_id << "\n";
-		remove(outputFilename.c_str());
-	    } else {
-		remove(filename.c_str());
-		if (rename(outputFilename.c_str(), filename.c_str()) != 0) {
-		    cout << "Failed to update the file with the new data.\n";
-		} else {
-		    cout << "Added data to user ID: " << user_id << "\n";
-		}
-	    }
+		return -1; // If not found
 	}
-
-
-	void remove_data(const string& user_input, const string& user_id, const string& filename) {
-	    fstream inFile;
-	    fstream outFile;
-	    string line;
-	    char fields[10][101] = {};
-	    int numFields;
-	    bool found = false;
-	    int columnIndexToDecrement = 4;  // Set the index of the column you want to decrement
-
-	    inFile.open(filename);
-	    if (!inFile.is_open()) {
-		cout << "Cannot open file \"" << filename << "\"\n";
-		return;
-	    }
-
-	    string outputFilename = "temp_" + filename;
-	    outFile.open(outputFilename, ios::out);
-	    if (!outFile.is_open()) {
-		cout << "Cannot create temporary file \"" << outputFilename << "\"\n";
-		inFile.close();
-		return;
-	    }
-
-	    while (getline(inFile, line, '\n')) {
-		numFields = extractFields(line, fields);
-		string updatedLine = "";
-		if (numFields > 0 && strcmp(fields[0], user_id.c_str()) == 0) {
-		    for (int i = 0; i < numFields; i++) {
-			if (strcmp(fields[i], user_input.c_str()) != 0) {
-			    if (i == columnIndexToDecrement) {
-				int value = stoi(fields[i]);
-				if (value >= 1) {
-				    value -= 1;
-				}
-				updatedLine += to_string(value) + (i < numFields - 1 ? "," : "");
-			    } else {
-				updatedLine += string(fields[i]) + (i < numFields - 1 ? "," : "");
-			    }
-			}
-		    }
-		    if (updatedLine.length() != line.length()) {
-			found = true;
-		    }
-		}
-		else {
-		    updatedLine = line;
-		}
-		outFile << updatedLine << "\n";
-	    }
-
-	    inFile.close();
-	    outFile.close();
-
-	    if (!found) {
-		cout << "No record found with user ID: " << user_id << " and user input: " << user_input << "\n";
-		remove(outputFilename.c_str());
-	    }
-	    else {
-		remove(filename.c_str());
-		if (rename(outputFilename.c_str(), filename.c_str()) != 0) {
-		    cout << "Failed to update the file with the new data.\n";
-		}
-		else {
-		    cout << "Removed data from user ID: " << user_id << "\n";
-		}
-	    }
-	}
-
-
-
-	void add_ID(const string& filename) {
-	    fstream inFile;
-	    fstream outFile;
-	    string line;
-	    char fields[10][101] = {};
-	    int numFields;
-	    bool found = false;
-	    int rowNumber = 0;
-	    int errorCount = 0;
-
-	    inFile.open(filename);
-	    if (!inFile.is_open()) {
-		cout << "Cannot open file \"" << filename << "\"\n";
-		return;
-	    }
-
-	    string outputFilename = "temp_" + filename;
-	    outFile.open(outputFilename, ios::out);
-	    if (!outFile.is_open()) {
-		cout << "Cannot create temporary file \"" << outputFilename << "\"\n";
-		inFile.close();
-		return;
-	    }
-
-	    while (getline(inFile, line, '\n')) {
-		numFields = extractFields(line, fields);
-		if (numFields == 3) {
-		    found = true;
-		    char id[10];
-		    snprintf(id, sizeof(id), "HKCC%04d", rowNumber);
-		    string updatedLine = id;
-		    for (int i = 0; i < numFields; ++i) {
-			updatedLine += "," + string(fields[i]);
-		    }
-		    updatedLine += ",0"; 
-		    line = updatedLine;
-		} else if (numFields != 5) {
-		    errorCount++;
-		}
-		outFile << line << "\n";
-		rowNumber++;
-	    }
-
-	    inFile.close();
-	    outFile.close();
-
-	    if (!found) {
-		cout << "No rows with 3 cells found.\n";
-		remove(outputFilename.c_str());
-	    }
-	    else {
-		remove(filename.c_str());
-		if (rename(outputFilename.c_str(), filename.c_str()) != 0) {
-		    cout << "Failed to update the file with the new data.\n";
-		}
-		else {
-		    cout << "Added ID and a default 0 column to all rows with 3 cells.\n";
-		}
-	    }
-	}
-
 
 	/// <summary>
 	/// file reading and editing
 	/// </summary>
 
+	void returnbook(const string& file, const borrower* borrowers, int numBorrowers) {//R4
+		string userId;
+		string bookid;
+		cout << "*********************************\n"
+			<< "*** Book Returning ***\n"
+			<< "Please input your borrower_ID: ";
+		cin >> userId;
+
+		int index = findBorrowerByUserId(borrowers, numBorrowers, userId);
+
+		if (index >= 0) {
+			cout << "Borrower with user ID " << userId << " found: " << endl;
+			cout<< "Borrower_ID:" << borrowers[index].borrowid
+				<< "Lastname: " << borrowers[index].lastname
+				<< ", Firstname: " << borrowers[index].firstname
+				<< ", Number: " << borrowers[index].number
+				<< ", Borrow: " << borrowers[index].borrow << endl;
+		}
+		else {
+			cout << "Borrower with user ID " << userId << " not found." << endl;
+		}
+		cout << "Enter the returning book ID: ";
+		cin >> bookid;
+
+		// Check if the borrower has borrowed the book
+		
+		// If yes, update the book's availability and remove the book from the borrower's list of borrowed books
+
+		cout << "Do you want to enter another book ID? (Y/N): ";
+	}
+
+void readBookCSV(string filename)
+{
+	vector<book> books;
+    int numLines = countLines(filename);
+    if (numLines < 0)
+    {
+        return;
+    }
+
+    fstream inFile;
+    inFile.open(filename);
+
+    if (!inFile.is_open())
+    {
+        cout << "Cannot open file \"" << filename << "\"\n";
+        return;
+    }
+
+    string line;
+    char fields[10][101] = {};
+    int numFields;
+    int countRecords = 0;
+
+    while (getline(inFile, line, '\n'))
+    {
+        numFields = extractFields(line, fields);
+
+        if (numFields >= 5)
+        {
+			std::string id(fields[0]);
+			std::string title(fields[1]);
+			std::string author(fields[2]);
+			std::string publisher(fields[3]);
+			int year = stoi(fields[4]);
+			book b(id, title, author, publisher, year);
+            books.push_back(b);
+        }
+
+        countRecords++;
+    }
+
+    inFile.close();
+
+    cout << "Read " << countRecords << " records from file \"" << filename << "\"\n";
+}
+
+void removeBorrowerById(borrower*& borrowers, int& numBorrowers, const string& userId) {//R2.4
+	int index = findBorrowerByUserId(borrowers, numBorrowers, userId);
+
+	if (index >= 0) {
+		borrower* newBorrowers = new borrower[numBorrowers - 1];
+		int j = 0;
+
+		for (int i = 0; i < numBorrowers; i++) {
+			if (i != index) {
+				newBorrowers[j++] = borrowers[i];
+			}
+		}
+
+		delete[] borrowers;
+		borrowers = newBorrowers;
+		numBorrowers--;
+
+		cout << "Borrower with user ID " << userId << " removed." << endl;
+	}
+	else {
+		cout << "Borrower with user ID " << userId << " not found." << endl;
+	}
+}
+
+
+void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
+	int answer;
+	cout << "*** Manage Borrowers *** \n"
+	"[1] Display borrowers \n"
+	"[2] Search borrower \n"
+	"[3] Add borrower \n"
+	"[4] Remove borrower \n"
+	"[5] Back \n"
+	"************************ \n"
+	"Option (1 - 5):";
+
+	cin >> answer;
+	string im;
+	string searchid;
+	
+
+	while (true) {
+		switch (answer) {
+		case 1:
+			//
+			break;
+		case 2: {
+			cout << "*********************************\n"
+				"Search brower"
+				"Borrower_ID";
+			cin >> searchid;
+			int index = findBorrowerByUserId(borrowers, numBorrowers, searchid);
+
+			if (index >= 0) {
+				cout << "Borrower with user ID " << searchid << " found: " << endl;
+				cout << "Borrower_ID:" << borrowers[index].borrowid
+					<< "Lastname: " << borrowers[index].lastname
+					<< ", Firstname: " << borrowers[index].firstname
+					<< ", Number: " << borrowers[index].number
+					<< ", Borrow: " << borrowers[index].borrow << endl;
+			}
+			else {
+				cout << "Borrower with user ID " << searchid << " not found." << endl;
+			}
+			cout << "*** Manage Borrowers *** \n"
+				"[1] Display borrowers \n"
+				"[2] Search borrower \n"
+				"[3] Add borrower \n"
+				"[4] Remove borrower \n"
+				"[5] Back \n"
+				"************************ \n"
+				"Option (1 - 5):";
+			break;
+		}
+		case 3:
+
+			break;
+		case 4:
+			cout << "*********************************\n"
+				"Careful!!!Borrower Removing Mode \n "
+				"Input the borrowerID:";
+			cin >> im;
+			removeBorrowerById(borrowers, numBorrowers, im);
+			cout << "*** Manage Borrowers *** \n"
+				"[1] Display borrowers \n"
+				"[2] Search borrower \n"
+				"[3] Add borrower \n"
+				"[4] Remove borrower \n"
+				"[5] Back \n"
+				"************************ \n"
+				"Option (1 - 5):";
+			break;
+		case 5:
+			return;
+			break;
+		default:
+			cout << "Enter number between 1-5 only \n"
+				"********************************* \n"
+				"Option(1 - 5) :";
+			cin >> answer;
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		}
+	}
+}
+	
+	
+	/*
 	void borrow_book(string file) {
 		string borrowerID;
 		cout << "Enter the borrower's ID: ";
@@ -339,34 +467,7 @@
 		
 	}
 
-	void return_book(string file) {//22177271a La Yu Fung
-		string borrowerID;
-		cout << "Enter the borrower's ID: ";
-		cin >> borrowerID;
-
-		// Check if the borrower ID is valid and if the borrower has borrowed any books
-		int numRecords = readline(file, borrowerID);
-		if (numRecords == 0) {
-			cout << "No record found for borrower ID " << borrowerID << endl;
-			return;
-		}
-		// If not, display an appropriate message and return
-
-		string bookID;
-		char userChoice;
-		do {
-			cout << "Enter the returning book ID: ";
-			cin >> bookID;
-
-			// Check if the borrower has borrowed the book
-			remove_data(bookID, borrowerID, file);
-			// If yes, update the book's availability and remove the book from the borrower's list of borrowed books
-
-			cout << "Do you want to enter another book ID? (Y/N): ";
-			cin >> userChoice;
-			cin.ignore();
-		} while (tolower(userChoice) == 'y');
-	}
+	*/
 
 
 	int main() {
@@ -374,6 +475,8 @@
 		string filename_borrow;
 		char answer;
 		int mode;
+		borrower* borrowers = nullptr;
+		int numBorrowers = 0;
 
 		cout << "Import book list from file? [Y/N]: ";
 		cin >> answer;
@@ -393,8 +496,7 @@
 		if (tolower(answer) == 'y') {
 			cout << "Input path to CSV file: ";
 			getline(cin, filename_borrow);
-			add_ID(filename_borrow);
-			readCSV(filename_borrow);
+			numBorrowers = readCSV_borrow(filename_borrow, borrowers); // Assign the return value to numBorrowers
 		}
 		else {
 			cout << "No borrower list is imported \n";
@@ -420,16 +522,13 @@
 				//
 				break;
 			case 2:
-				//
+				manageborrower(borrowers, numBorrowers);
 				break;
 			case 3:
 				
 				break;
 			case 4:
-				return_book(filename_borrow);
-				cout << "********************************* \n"
-					"Option(1 - 7) :";
-				cin >> mode;
+				returnbook(filename_borrow, borrowers, numBorrowers);
 				break;
 			case 5:
 				//
