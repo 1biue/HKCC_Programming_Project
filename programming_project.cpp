@@ -39,43 +39,42 @@ public:
 		this->available = true;
     }
 
-
-    string getId() const
+    string getId()
     {
         return bookid;
     }
 
-    string getTitle() const
+    string getTitle()
     {
         return title;
     }
 
-    string getAuthor() const
+    string getAuthor()
     {
         return author;
     }
 
-    string getPublisher() const
+    string getPublisher()
     {
         return publisher;
     }
 
-    int getYear() const
+    int getYear()
     {
         return year;
     }
 
-    bool isAvailable() const
+    bool isAvailable()
     {
         return available;
     }
 
-	void setAvailability(bool available) 
+	void setAvailability(bool available)
 	{
 		this->available = available;
 	}
 
-    string getBorrower() const
+    string getBorrower()
     {
         return borrower;
     }
@@ -641,8 +640,6 @@ void borrowBook(vector<book>& books, borrower* borrowers, int numBorrowers) {
 	}
 }
 
-<<<<<<< HEAD
-=======
 vector<book> top_books(const vector<book>& books, int numBooks)
 {
 	vector<book> sortedBooks(books, books + numBooks);
@@ -672,7 +669,6 @@ void Member_list() {
 	cout << "    LA Yu Fung       22177271A    204           D" << endl;
 }
 
->>>>>>> c798c34c5994b192bee8839b9cc57c811626a68c
 	int main() {
 		string filename;
 		string filename_borrow;
@@ -802,93 +798,3 @@ void Member_list() {
 		}
 		return 0;
 	}
-
-	void displayMenu(const vector<book>& books) {//R1
-		int answer;
-		int Book_ID;
-		cout << "*** Manage Books *** \n"
-			"[1] Display books \n"
-			"[2] Search book \n"
-			"[3] Add book \n"
-			"[4] Remove book \n"
-			"[5] Back \n"
-			"************************ \n"
-			"Option (1 - 5):";
-
-		cin >> answer;
-		string search_query;
-		int num_books = sizeof(books) / sizeof(books[0]);
-
-		while (true) {
-			switch (answer) {
-				case 1:
-					cout << "ID         Title                          Author                        Publisher                     Year" << endl;
-					cout << "------------------------------------------------------------------------------------------------------------" << endl;
-
-					for (const book& b : books) {
-						sort(b.getId().begin(), b.getId().end());
-						cout << left << setw(11) << b.getId()
-							<< setw(30) << b.getTitle()
-							<< setw(30) << b.getAuthor()
-							<< setw(30) << b.getPublisher()
-							<< b.getYear() << endl;
-					}
-					cout << "*** Manage Books *** \n"
-						"[1] Display books \n"
-						"[2] Search book \n"
-						"[3] Add book \n"
-						"[4] Remove book \n"
-						"[5] Back \n"
-						"************************ \n"
-						"Option (1 - 5):";
-					cin >> answer;
-					break;
-
-				case 2: {
-					//function of R1.2				
-					cout << "Enter a string with a maximum of 50 characters: ";
-					getline(cin, search_query);
-
-					if (search_query.length() > 50) {
-						cout << "Error: String exceeds maximum length of 50 characters." << endl;
-						cout << "Enter a string with a maximum of 50 characters: ";
-						getline(cin, search_query);
-					}
-
-					transform(search_query.begin(), search_query.end(), search_query.begin(), ::tolower);
-			
-					cout << "*** Manage Books *** \n"
-						"[1] Display books \n"
-						"[2] Search book \n"
-						"[3] Add book \n"
-						"[4] Remove book \n"
-						"[5] Back \n"
-						"************************ \n"
-						"Option (1 - 5):";
-					
-					break;
-				
-				case 3:
-					//function of R1.3
-
-					break;
-				case 4:
-					//function of R1.4
-					break;
-				case 5:
-					//function of R1.5
-					break;
-				default:
-					cout << "Enter number between 1-5 only \n"
-						"********************************* \n"
-						"Option(1 - 5) :";
-					cin >> answer;
-					cin.clear();
-					cin.ignore(numeric_limits<streamsize>::max(), '\n');
-					}
-			}
-		}
-	}
-
-		// Function of adding book
-		
