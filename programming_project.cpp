@@ -250,23 +250,6 @@ public:
 	/// <summary>
 	/// file reading and editing
 	/// </summary>
-	/// 
-	bool contains(const book& b, const string& search_query) {
-		string lowercase_search_query = search_query;
-		transform(lowercase_search_query.begin(), lowercase_search_query.end(), lowercase_search_query.begin(), ::tolower);
-
-		string lowercase_title = b.getTitle();
-		string lowercase_author = b.getAuthor();
-		string lowercase_publisher = b.getPublisher();
-		transform(lowercase_title.begin(), lowercase_title.end(), lowercase_title.begin(), ::tolower);
-		transform(lowercase_author.begin(), lowercase_author.end(), lowercase_author.begin(), ::tolower);
-		transform(lowercase_publisher.begin(), lowercase_publisher.end(), lowercase_publisher.begin(), ::tolower);
-
-		return (lowercase_title.find(lowercase_search_query) != string::npos) ||
-			(lowercase_author.find(lowercase_search_query) != string::npos) ||
-			(lowercase_publisher.find(lowercase_search_query) != string::npos);
-	}
-
 
 	void displayMenu(const vector<book>& books) {//R1
 		int answer;
@@ -281,10 +264,9 @@ public:
 			"Option (1 - 5):";
 
 		cin >> answer;
-		string search_query = "example";
+		string search_query;
 		int num_books = sizeof(books) / sizeof(books[0]);
-		int Year;
-		string ID, Title, Author, Publisher;
+
 		while (true) {
 			switch (answer) {
 			case 1:
@@ -317,26 +299,12 @@ public:
 
 				if (search_query.length() > 50) {
 					cout << "Error: String exceeds maximum length of 50 characters." << endl;
-					cout << "Please enter a string with a maximum of 50 characters: ";
+					cout << "Enter a string with a maximum of 50 characters: ";
 					getline(cin, search_query);
 				}
 
 				transform(search_query.begin(), search_query.end(), search_query.begin(), ::tolower);
 
-				vector<book> books; // Assuming this contains a list of books
-				for (const auto& b : books) {
-					if (contains(b, search_query)) {
-						// The book contains the search query
-						cout << "Searching result" << endl;
-						cout << left << setw(11) << b.getId()
-							<< setw(30) << b.getTitle()
-							<< setw(30) << b.getAuthor()
-							<< setw(30) << b.getPublisher()
-							<< b.getYear() << endl;
-					}
-				}
-
-				
 				cout << "*** Manage Books *** \n"
 					"[1] Display books \n"
 					"[2] Search book \n"
@@ -349,56 +317,8 @@ public:
 				break;
 
 			case 3:
-				//function of R1.3				
-				cout << "provide the following details: " << endl;
-				cout << "Provide ID: \n";
-				cin >> ID;
-				cout << "Provide Title: \n";
-				cin >> Title;
-				cout << "Provide Author: \n";
-				cin >> Author;
-				cout << "Provide Publisher: \n";
-				cin >> Publisher;
+				//function of R1.3
 
-
-				for (int i = 0; i < num_books; i++) {
-					if (ID.length() <= 10 && ID != books[i].getId()){
-						
-						
-					}
-					else {
-						cout << "ID must be a string with maximum 10 characters and has to be unique." << endl;
-					}
-			
-					if (Title.length() <= 100) {
-						
-					}
-					else {
-						cout << "Title must be a string with maximum 100 characters." << endl;
-					}
-
-					if (Author.length() <= 50){
-						
-					}
-					else {
-						cout << "Author must be a string with maximum 50 characters." << endl;
-					}
-
-					if ((Publisher.length() <= 50)) {
-						
-					}
-					else {
-						cout << "Publisher must be a string with maximum 50 characters." << endl;
-					}
-
-					if (Year >= 0) {
-						
-					}
-					else {
-						cout << "Year must be positive." << endl;
-					}
-
-						 
 				break;
 			case 4:
 				//function of R1.4
