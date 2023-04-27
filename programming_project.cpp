@@ -376,6 +376,42 @@ void removeBorrowerById(borrower*& borrowers, int& numBorrowers, const string& u
 	}
 }
 
+bool compareBorrowers(const borrower& a, const borrower& b) {
+	if (a.lastname == b.lastname) {
+		return a.firstname < b.firstname;
+	}
+	return a.lastname < b.lastname;
+}
+
+string generateBorrowerId(int numBorrowers) {
+	stringstream id;
+	id << std::setw(4) << std::setfill('0') << numBorrowers;
+	std::string in_id = id.str();
+
+	return "HKCC" + in_id;
+}
+
+void addBorrower(borrower*& borrowers, int& numBorrowers, const string& borrowerId, const string& lastName, const string& firstName, const string& contactNumber) {
+	borrower newBorrower;
+	newBorrower.borrowid = borrowerId;
+	newBorrower.lastname = lastName;
+	newBorrower.firstname = firstName;
+	newBorrower.number = contactNumber;
+	newBorrower.borrow = 0;
+
+	// Resize the borrowers array
+	borrower* temp = new borrower[numBorrowers + 1];
+	for (int i = 0; i < numBorrowers; ++i) {
+		temp[i] = borrowers[i];
+	}
+	temp[numBorrowers] = newBorrower;
+	delete[] borrowers;
+	borrowers = temp;
+
+	// Increment the number of borrowers
+	numBorrowers++;
+}
+
 
 void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 	int answer;
@@ -391,17 +427,42 @@ void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 	cin >> answer;
 	string im;
 	string searchid;
+	int removeIndex;
 	
 
 	while (true) {
 		switch (answer) {
 		case 1:
-			//
+			// Sort the borrowers array
+			sort(borrowers, borrowers + numBorrowers, compareBorrowers);
+
+			// Display the table header
+			cout << "ID         Name                          Contact number  Number of books borrowed" << endl;
+			cout << "--------------------------------------------------------------------------------" << endl;
+
+			// Display the borrowers list
+			for (int i = 0; i < numBorrowers; ++i) {
+				cout << left << setw(11) << borrowers[i].borrowid
+					<< setw(30) << (borrowers[i].lastname + ", " + borrowers[i].firstname)
+					<< setw(16) << borrowers[i].number
+					<< borrowers[i].borrow << endl;
+			}
+
+			// Display the manage borrowers menu again
+			cout << "*** Manage Borrowers *** \n"
+				"[1] Display borrowers \n"
+				"[2] Search borrower \n"
+				"[3] Add borrower \n"
+				"[4] Remove borrower \n"
+				"[5] Back \n"
+				"************************ \n"
+				"Option (1 - 5):";
+			cin >> answer;
 			break;
 		case 2: {
 			cout << "*********************************\n"
 				"Search brower"
-				"Borrower_ID";
+				"Borrower_ID:";
 			cin >> searchid;
 			int index = findBorrowerByUserId(borrowers, numBorrowers, searchid);
 
@@ -424,17 +485,71 @@ void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 				"[5] Back \n"
 				"************************ \n"
 				"Option (1 - 5):";
+			cin >> answer;
 			break;
 		}
-		case 3:
+		case 3: {
+			string lastName, firstName, contactNumber;
+			cout << "Enter the last name: ";
+			cin >> lastName;
+			cout << "Enter the first name: ";
+			cin.ignore();
+			getline(cin, firstName);
+			cout << "Enter the contact number: ";
+			cin >> contactNumber;
 
-			break;
+			// Convert last name to uppercase
+			transform(lastName.begin(), lastName.end(), lastName.begin(), ::toupper);
+
+			// Capitalize each word in first name
+			stringstream ss(firstName);
+			string word;
+			firstName.clear();
+			while (ss >> word) {
+				word[0] = toupper(word[0]);
+				for (size_t i = 1; i < word.length(); ++i) {
+					word[i] = tolower(word[i]);
+				}
+				firstName += (firstName.empty() ? "" : " ") + word;
+			}
+
+			// Check if the contact number is valid
+			if (contactNumber.length() == 8 && (contactNumber[0] == '2' || contactNumber[0] == '3' || contactNumber[0] == '5' || contactNumber[0] == '6' || contactNumber[0] == '9')) {
+				string borrowerId = generateBorrowerId(numBorrowers);
+				addBorrower(borrowers, numBorrowers, borrowerId, lastName, firstName, contactNumber);
+				cout << "Borrower has been successfully added with ID: " << borrowerId << endl;
+			}
+			else {
+				cout << "Invalid contact number. Please try again." << endl;
+			}
+		}
+			  cout << "*** Manage Borrowers *** \n"
+				  "[1] Display borrowers \n"
+				  "[2] Search borrower \n"
+				  "[3] Add borrower \n"
+				  "[4] Remove borrower \n"
+				  "[5] Back \n"
+				  "************************ \n"
+				  "Option (1 - 5):";
+			  cin >> answer;
+			  break;
+
 		case 4:
 			cout << "*********************************\n"
 				"Careful!!!Borrower Removing Mode \n "
 				"Input the borrowerID:";
 			cin >> im;
-			removeBorrowerById(borrowers, numBorrowers, im);
+			removeIndex = findBorrowerByUserId(borrowers, numBorrowers, im);
+			if (removeIndex >= 0 && borrowers[removeIndex].borrow == 0) {
+				removeBorrowerById(borrowers, numBorrowers, im);
+				cout << "Borrower with ID " << im << " has been successfully removed." << endl;
+			}
+			else if (removeIndex >= 0) {
+				cout << "Unable to delete (still have books not returned)" << endl;
+			}
+			else {
+				cout << "Borrower not found" << endl;
+			}
 			cout << "*** Manage Borrowers *** \n"
 				"[1] Display borrowers \n"
 				"[2] Search borrower \n"
@@ -443,6 +558,7 @@ void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 				"[5] Back \n"
 				"************************ \n"
 				"Option (1 - 5):";
+			cin >> answer;
 			break;
 		case 5:
 			return;
@@ -527,19 +643,6 @@ void Member_list() {
 	cout << "    LA Yu Fung       22177271A    204           D" << endl;
 }
 
-void displayMainMenu() {
-	cout << "*** Library Management System ***" << endl;
-	cout << "[1] Manage books" << endl;
-	cout << "[2] Manage borrowers" << endl;
-	cout << "[3] Borrow book(s)" << endl;
-	cout << "[4] Return book(s)" << endl;
-	cout << "[5] Useful feature(s) added" << endl;
-	cout << "[6] Member List" << endl;
-	cout << "[7] Exit" << endl;
-	cout << "*********************************" << endl;
-	cout << "Option(1 - 7): ";
-}
-
 	int main() {
 		string filename;
 		string filename_borrow;
@@ -620,7 +723,7 @@ void displayMainMenu() {
 					"[2] Manage borrowers \n"
 					"[3] Borrow book(s) \n"
 					"[4] Return book(s) \n"
-					"[5] Useful feature(s) added \n"
+					"[5] popular book \n"
 					"[6] Member List \n"
 					"[7] Exit \n"
 					"********************************* \n"
