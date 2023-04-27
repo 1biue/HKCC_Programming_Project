@@ -39,32 +39,32 @@ public:
 		this->available = true;
     }
 
-    string getId()
+    string getId() const
     {
         return bookid;
     }
 
-    string getTitle()
+    string getTitle() const
     {
         return title;
     }
 
-    string getAuthor()
+    string getAuthor() const
     {
         return author;
     }
 
-    string getPublisher()
+    string getPublisher() const
     {
         return publisher;
     }
 
-    int getYear()
+    int getYear() const
     {
         return year;
     }
 
-    bool isAvailable()
+    bool isAvailable() const
     {
         return available;
     }
@@ -642,7 +642,7 @@ void borrowBook(vector<book>& books, borrower* borrowers, int numBorrowers) {
 
 vector<book> top_books(const vector<book>& books, int numBooks)
 {
-	vector<book> sortedBooks(books, books + numBooks);
+	vector<book> sortedBooks(books.begin(), books.end());
 	sort(sortedBooks.begin(), sortedBooks.end(), [](const book& a, const book& b) {
 		return a.getBorrowCount() > b.getBorrowCount();
 		});
@@ -650,6 +650,7 @@ vector<book> top_books(const vector<book>& books, int numBooks)
 	vector<book> top5Books(sortedBooks.begin(), sortedBooks.begin() + min(5, numBooks));
 	return top5Books;
 }
+
 
 void print_top_books(const vector<book>& top5Books)
 {
