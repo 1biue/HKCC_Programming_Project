@@ -527,6 +527,19 @@ void Member_list() {
 	cout << "    LA Yu Fung       22177271A    204           D" << endl;
 }
 
+void displayMainMenu() {
+	cout << "*** Library Management System ***" << endl;
+	cout << "[1] Manage books" << endl;
+	cout << "[2] Manage borrowers" << endl;
+	cout << "[3] Borrow book(s)" << endl;
+	cout << "[4] Return book(s)" << endl;
+	cout << "[5] Useful feature(s) added" << endl;
+	cout << "[6] Member List" << endl;
+	cout << "[7] Exit" << endl;
+	cout << "*********************************" << endl;
+	cout << "Option(1 - 7): ";
+}
+
 	int main() {
 		string filename;
 		string filename_borrow;
