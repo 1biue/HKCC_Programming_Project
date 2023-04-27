@@ -210,7 +210,7 @@ public:
 		// Print the borrower details
 		for (int i = 0; i < countRecords; i++) {
 			cout<< "Borrower_ID:" << borrowers[i].borrowid
-				<< "Lastname: " << borrowers[i].lastname
+				<< ", Lastname: " << borrowers[i].lastname
 				<< ", Firstname: " << borrowers[i].firstname
 				<< ", Number: " << borrowers[i].number
 				<< ", Borrow: " << borrowers[i].borrow << endl;
@@ -249,51 +249,60 @@ public:
 	void returnbook(const string& file, borrower* borrowers, int numBorrowers, vector<book>& books, int numofbook) {//R4
 		string userId;
 		string bookid;
-		cout << "*********************************\n"
-			<< "*** Book Returning ***\n"
-			<< "Please input your borrower_ID: ";
-		cin >> userId;
+		string ynn;
 
-		int index = findBorrowerByUserId(borrowers, numBorrowers, userId);
+		do {
+			cout << "*********************************\n"
+				<< "*** Book Returning ***\n"
+				<< "Please input your borrower_ID: ";
+			cin >> userId;
 
-		if (index >= 0) {
+			int index = findBorrowerByUserId(borrowers, numBorrowers, userId);
+
+			while (index < 0) {
+				cout << "Borrower with user ID " << userId << " not found." << endl
+					<< "Please input your borrower_ID: ";
+				cin >> userId;
+			}
 			cout << "Borrower with user ID " << userId << " found: " << endl;
 			cout << "Borrower_ID:" << borrowers[index].borrowid
 				<< "Lastname: " << borrowers[index].lastname
 				<< ", Firstname: " << borrowers[index].firstname
 				<< ", Number: " << borrowers[index].number
 				<< ", Borrow: " << borrowers[index].borrow << endl;
-		}
-		else {
-			cout << "Borrower with user ID " << userId << " not found." << endl;
-		}
-		cout << "Enter the returning book ID: ";
-		cin >> bookid;
 
-		// Check if the borrower has borrowed the book
-		vector<book>::iterator it;
-		for (it = books.begin(); it != books.end(); it++) {
-			if (it->getId() == bookid) {
-				if (it->getBorrower() == userId) {
-					it->setBorrower("");
-					it->setAvailability(true);
-					borrowers[index].borrow -= 1;
-					cout << "Book returned successfully." << endl;
+			cout << "Enter the returning book ID: ";
+			cin >> bookid;
+
+			// Check if the borrower has borrowed the book
+			vector<book>::iterator it;
+			bool bookFound = false;
+			for (it = books.begin(); it != books.end(); it++) {
+				if (it->getId() == bookid) {
+					if (it->getBorrower() == userId) {
+						it->setBorrower("");
+						it->setAvailability(true);
+						borrowers[index].borrow -= 1;
+						cout << "Book returned successfully." << endl;
+					}
+					else {
+						cout << "Book not borrowed by this borrower." << endl;
+					}
+					bookFound = true;
+					break;
 				}
-				else {
-					cout << "Book not borrowed by this borrower." << endl;
-				}
-				return;
 			}
-		}
 
-		cout << "Do you want to enter another book ID? (Y/N): ";
-		string ynn;
-		cin >> ynn;
-		if (ynn == "n") {
-			return;
-		}
+			if (!bookFound) {
+				cout << "Borrowed book not found" << endl;
+			}
+
+			cout << "Do you want to enter another book ID? (Y/N): ";
+			cin >> ynn;
+		} while (ynn != "n" && ynn != "N");
 	}
+
+
 
 
     int numOfBooksRead = 0;
@@ -572,6 +581,20 @@ void borrowBook(vector<book>& books, borrower* borrowers, int numBorrowers) {
 				break;
 			case 4:
 				returnbook(filename_borrow, borrowers, numBorrowers, books, numOfBooksRead);
+				cout << "*** Library Management System *** \n"
+					"[1] Manage books \n"
+					"[2] Manage borrowers \n"
+					"[3] Borrow book(s) \n"
+					"[4] Return book(s) \n"
+					"[5] Useful feature(s) added \n"
+					"[6] Member List \n"
+					"[7] Exit \n"
+					"********************************* \n"
+					"Option(1 - 7) :";
+				cin >> mode;
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
 				break;
 			case 5:
 				//
