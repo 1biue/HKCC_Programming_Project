@@ -376,6 +376,12 @@ void removeBorrowerById(borrower*& borrowers, int& numBorrowers, const string& u
 	}
 }
 
+bool compareBorrowers(const borrower& a, const borrower& b) {
+	if (a.lastname == b.lastname) {
+		return a.firstname < b.firstname;
+	}
+	return a.lastname < b.lastname;
+}
 
 void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 	int answer;
@@ -391,12 +397,37 @@ void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 	cin >> answer;
 	string im;
 	string searchid;
+	int removeIndex;
 	
 
 	while (true) {
 		switch (answer) {
 		case 1:
-			//
+			// Sort the borrowers array
+			sort(borrowers, borrowers + numBorrowers, compareBorrowers);
+
+			// Display the table header
+			cout << "ID         Name                          Contact number  Number of books borrowed" << endl;
+			cout << "--------------------------------------------------------------------------------" << endl;
+
+			// Display the borrowers list
+			for (int i = 0; i < numBorrowers; ++i) {
+				cout << left << setw(11) << borrowers[i].borrowid
+					<< setw(30) << (borrowers[i].lastname + ", " + borrowers[i].firstname)
+					<< setw(16) << borrowers[i].number
+					<< borrowers[i].borrow << endl;
+			}
+
+			// Display the manage borrowers menu again
+			cout << "*** Manage Borrowers *** \n"
+				"[1] Display borrowers \n"
+				"[2] Search borrower \n"
+				"[3] Add borrower \n"
+				"[4] Remove borrower \n"
+				"[5] Back \n"
+				"************************ \n"
+				"Option (1 - 5):";
+			cin >> answer;
 			break;
 		case 2: {
 			cout << "*********************************\n"
@@ -424,6 +455,7 @@ void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 				"[5] Back \n"
 				"************************ \n"
 				"Option (1 - 5):";
+			cin >> answer;
 			break;
 		}
 		case 3:
@@ -434,7 +466,17 @@ void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 				"Careful!!!Borrower Removing Mode \n "
 				"Input the borrowerID:";
 			cin >> im;
-			removeBorrowerById(borrowers, numBorrowers, im);
+			removeIndex = findBorrowerByUserId(borrowers, numBorrowers, im);
+			if (removeIndex >= 0 && borrowers[removeIndex].borrow == 0) {
+				removeBorrowerById(borrowers, numBorrowers, im);
+				cout << "Borrower with ID " << im << " has been successfully removed." << endl;
+			}
+			else if (removeIndex >= 0) {
+				cout << "Unable to delete (still have books not returned)" << endl;
+			}
+			else {
+				cout << "Borrower not found" << endl;
+			}
 			cout << "*** Manage Borrowers *** \n"
 				"[1] Display borrowers \n"
 				"[2] Search borrower \n"
@@ -443,6 +485,7 @@ void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 				"[5] Back \n"
 				"************************ \n"
 				"Option (1 - 5):";
+			cin >> answer;
 			break;
 		case 5:
 			return;
