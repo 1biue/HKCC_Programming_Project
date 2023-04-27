@@ -831,12 +831,12 @@ void print_top_books(const vector<book>& top5Books)//R5 La Yu Fung
 
 void Member_list() {
 	cout << "   Student name     Student ID   Class   Tutorial group" << endl;
+	cout << " CHAN KWOK HIN       22156066A    204           C" << endl;
 	cout << "   CHEN Junjie       22017785A    201           C" << endl;
 	cout << "  CHENG Wai Shing    22063403A    201           C" << endl;
 	cout << " CHEUNG Chun Sing    22176446A    204           C" << endl;
-	cout << "    LA Yu Fung       22177271A    204           D" << endl;
-	cout << " CHAN KWOK HIN       22156066A    204           C" << endl;
 	cout << " CHEUNG LOK YIN      22166557A    204           C" << endl;
+	cout << "    LA Yu Fung       22177271A    204           D" << endl;
 }
 
 	int main() {
