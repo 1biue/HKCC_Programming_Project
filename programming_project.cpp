@@ -408,7 +408,7 @@ void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 			if (index >= 0) {
 				cout << "Borrower with user ID " << searchid << " found: " << endl;
 				cout << "Borrower_ID:" << borrowers[index].borrowid
-					<< "Lastname: " << borrowers[index].lastname
+					<< ", Lastname: " << borrowers[index].lastname
 					<< ", Firstname: " << borrowers[index].firstname
 					<< ", Number: " << borrowers[index].number
 					<< ", Borrow: " << borrowers[index].borrow << endl;
@@ -445,7 +445,7 @@ void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 				"Option (1 - 5):";
 			break;
 		case 5:
-		//
+			return;
 			break;
 		default:
 			cout << "Enter number between 1-5 only \n"
@@ -573,6 +573,19 @@ void borrowBook(vector<book>& books, borrower* borrowers, int numBorrowers) {
 				break;
 			case 2:
 				manageborrower(borrowers, numBorrowers);
+				cout << "*** Library Management System *** \n"
+					"[1] Manage books \n"
+					"[2] Manage borrowers \n"
+					"[3] Borrow book(s) \n"
+					"[4] Return book(s) \n"
+					"[5] Useful feature(s) added \n"
+					"[6] Member List \n"
+					"[7] Exit \n"
+					"********************************* \n"
+					"Option(1 - 7) :";
+				cin >> mode;
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
 				break;
 			case 3:
 				cout << "*********************************\n";
@@ -594,7 +607,6 @@ void borrowBook(vector<book>& books, borrower* borrowers, int numBorrowers) {
 				cin >> mode;
 				cin.clear();
 				cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
 				break;
 			case 5:
 				//
