@@ -251,6 +251,93 @@ public:
 	/// file reading and editing
 	/// </summary>
 
+	void displayMenu(const vector<book>& books) {//R1
+		int answer;
+		int Book_ID;
+		cout << "*** Manage Books *** \n"
+			"[1] Display books \n"
+			"[2] Search book \n"
+			"[3] Add book \n"
+			"[4] Remove book \n"
+			"[5] Back \n"
+			"************************ \n"
+			"Option (1 - 5):";
+
+		cin >> answer;
+		string search_query;
+		int num_books = sizeof(books) / sizeof(books[0]);
+
+		while (true) {
+			switch (answer) {
+			case 1:
+				cout << "ID         Title                          Author                        Publisher                     Year" << endl;
+				cout << "------------------------------------------------------------------------------------------------------------" << endl;
+
+				for (const book& b : books) {
+					sort(b.getId().begin(), b.getId().end());
+					cout << left << setw(11) << b.getId()
+						<< setw(30) << b.getTitle()
+						<< setw(30) << b.getAuthor()
+						<< setw(30) << b.getPublisher()
+						<< b.getYear() << endl;
+				}
+				cout << "*** Manage Books *** \n"
+					"[1] Display books \n"
+					"[2] Search book \n"
+					"[3] Add book \n"
+					"[4] Remove book \n"
+					"[5] Back \n"
+					"************************ \n"
+					"Option (1 - 5):";
+				cin >> answer;
+				break;
+
+			case 2: {
+				//function of R1.2				
+				cout << "Enter a string with a maximum of 50 characters: ";
+				getline(cin, search_query);
+
+				if (search_query.length() > 50) {
+					cout << "Error: String exceeds maximum length of 50 characters." << endl;
+					cout << "Enter a string with a maximum of 50 characters: ";
+					getline(cin, search_query);
+				}
+
+				transform(search_query.begin(), search_query.end(), search_query.begin(), ::tolower);
+
+				cout << "*** Manage Books *** \n"
+					"[1] Display books \n"
+					"[2] Search book \n"
+					"[3] Add book \n"
+					"[4] Remove book \n"
+					"[5] Back \n"
+					"************************ \n"
+					"Option (1 - 5):";
+
+				break;
+
+			case 3:
+				//function of R1.3
+
+				break;
+			case 4:
+				//function of R1.4
+				break;
+			case 5:
+				//function of R1.5
+				break;
+			default:
+				cout << "Enter number between 1-5 only \n"
+					"********************************* \n"
+					"Option(1 - 5) :";
+				cin >> answer;
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			}
+			}
+		}
+	}
+
 	void returnbook(const string& file, borrower* borrowers, int numBorrowers, vector<book>& books, int numofbook) {//R4
 		string userId;
 		string bookid;
