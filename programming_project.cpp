@@ -807,7 +807,7 @@ void borrowBook(vector<book>& books, borrower* borrowers, int numBorrowers) {
 	}
 }
 
-vector<book> top_books(const vector<book>& books, int numBooks)
+vector<book> top_books(const vector<book>& books, int numBooks)//R5 La Yu Fung
 {
 	vector<book> sortedBooks(books.begin(), books.end());
 	sort(sortedBooks.begin(), sortedBooks.end(), [](const book& a, const book& b) {
@@ -819,13 +819,18 @@ vector<book> top_books(const vector<book>& books, int numBooks)
 }
 
 
-void print_top_books(const vector<book>& top5Books)
+void print_top_books(const vector<book>& top5Books)//R5 La Yu Fung
 {
-	for (size_t i = 0; i < top5Books.size(); ++i)
-	{
-		cout << (i + 1) << ". [" << top5Books[i].getId() << "] "
-			<< top5Books[i].getTitle() << " has been borrowed for "
-			<< top5Books[i].getBorrowCount() << " times." << endl;
+	if (top5Books.empty()) {
+		cout << "Not found" << endl;
+	}
+	else {
+		for (size_t i = 0; i < top5Books.size(); ++i)
+		{
+			cout << (i + 1) << ". [" << top5Books[i].getId() << "] "
+				<< top5Books[i].getTitle() << " has been borrowed for "
+				<< top5Books[i].getBorrowCount() << " times." << endl;
+		}
 	}
 }
 
@@ -882,6 +887,7 @@ void Member_list() {
 		cin >> mode;
 		cin.clear();
 		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		vector<book> top5 = top_books(books, books.size());
 
 		while (true) {
 			switch (mode) {
@@ -927,13 +933,40 @@ void Member_list() {
 				cin.ignore(numeric_limits<streamsize>::max(), '\n');
 				break;
 			case 5:
-				//
+				cout << "Top 5 most popular books: " << endl;
+				print_top_books(top5);
+				cout << "*** Library Management System *** \n"
+					"[1] Manage books \n"
+					"[2] Manage borrowers \n"
+					"[3] Borrow book(s) \n"
+					"[4] Return book(s) \n"
+					"[5] popular book \n"
+					"[6] Member List \n"
+					"[7] Exit \n"
+					"********************************* \n"
+					"Option(1 - 7) :";
+				cin >> mode;
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
 				break;
 			case 6:
 				cout << "*********************************\n";
 				cout << "***********Member list***********\n";
 				Member_list();
 				cout << "*********************************\n";
+				cout << "*** Library Management System *** \n"
+					"[1] Manage books \n"
+					"[2] Manage borrowers \n"
+					"[3] Borrow book(s) \n"
+					"[4] Return book(s) \n"
+					"[5] popular book \n"
+					"[6] Member List \n"
+					"[7] Exit \n"
+					"********************************* \n"
+					"Option(1 - 7) :";
+				cin >> mode;
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
 			case 7:
 				char confirmExit;
 				do {
