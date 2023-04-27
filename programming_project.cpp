@@ -835,6 +835,8 @@ void Member_list() {
 	cout << "  CHENG Wai Shing    22063403A    201           C" << endl;
 	cout << " CHEUNG Chun Sing    22176446A    204           C" << endl;
 	cout << "    LA Yu Fung       22177271A    204           D" << endl;
+	cout << " CHAN KWOK HIN       22156066A    204           C" << endl;
+	cout << " CHEUNG LOK YIN      22166557A    204           C" << endl;
 }
 
 	int main() {
