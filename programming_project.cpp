@@ -246,7 +246,7 @@ public:
 	/// file reading and editing
 	/// </summary>
 
-	void returnbook(const string& file, borrower* borrowers, int numBorrowers, vector<book>& books, int numofbook) {//R4
+	void returnbook(const string& file, borrower* borrowers, int numBorrowers, vector<book>& books, int numofbook) {//R4 22177271A La Yu Fung
 		string userId;
 		string bookid;
 		string ynn;
@@ -308,7 +308,7 @@ public:
     int numOfBooksRead = 0;
 	vector<book> books;
 
-void readBookCSV(string filename)
+void readBookCSV(string filename)//22177271A La Yu Fung
 {
     int numLines = countLines(filename);
     if (numLines < 0)
@@ -352,7 +352,7 @@ void readBookCSV(string filename)
     cout << "Read " << numOfBooksRead << " records from file \"" << filename << "\"\n";
 }
 
-void removeBorrowerById(borrower*& borrowers, int& numBorrowers, const string& userId) {//R2.4
+void removeBorrowerById(borrower*& borrowers, int& numBorrowers, const string& userId) {//R2.4 22177271A La Yu Fung
 	int index = findBorrowerByUserId(borrowers, numBorrowers, userId);
 
 	if (index >= 0) {
@@ -376,14 +376,14 @@ void removeBorrowerById(borrower*& borrowers, int& numBorrowers, const string& u
 	}
 }
 
-bool compareBorrowers(const borrower& a, const borrower& b) {
+bool compareBorrowers(const borrower& a, const borrower& b) {//22177271A La Yu Fung
 	if (a.lastname == b.lastname) {
 		return a.firstname < b.firstname;
 	}
 	return a.lastname < b.lastname;
 }
 
-string generateBorrowerId(int numBorrowers) {
+string generateBorrowerId(int numBorrowers) {//22177271A La Yu Fung
 	stringstream id;
 	id << std::setw(4) << std::setfill('0') << numBorrowers;
 	std::string in_id = id.str();
@@ -391,7 +391,7 @@ string generateBorrowerId(int numBorrowers) {
 	return "HKCC" + in_id;
 }
 
-void addBorrower(borrower*& borrowers, int& numBorrowers, const string& borrowerId, const string& lastName, const string& firstName, const string& contactNumber) {
+void addBorrower(borrower*& borrowers, int& numBorrowers, const string& borrowerId, const string& lastName, const string& firstName, const string& contactNumber) {//22177271A La Yu Fung
 	borrower newBorrower;
 	newBorrower.borrowid = borrowerId;
 	newBorrower.lastname = lastName;
@@ -413,7 +413,7 @@ void addBorrower(borrower*& borrowers, int& numBorrowers, const string& borrower
 }
 
 
-void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
+void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2 22177271A La Yu Fung
 	int answer;
 	cout << "*** Manage Borrowers *** \n"
 	"[1] Display borrowers \n"
@@ -643,7 +643,7 @@ void Member_list() {
 	cout << "    LA Yu Fung       22177271A    204           D" << endl;
 }
 
-	int main() {
+	int main() {//22177271A La Yu FUng
 		string filename;
 		string filename_borrow;
 		char answer;
