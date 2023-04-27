@@ -519,6 +519,13 @@ void borrowBook(vector<book>& books, borrower* borrowers, int numBorrowers) {
 	}
 }
 
+void Member_list() {
+	cout << "   Student name     Student ID   Class   Tutorial group" << endl;
+	cout << "   CHEN Junjie       22017785A    201           C" << endl;
+	cout << "  CHENG Wai Shing    22063403A    201           C" << endl;
+	cout << " CHEUNG Chun Sing    22176446A    204           C" << endl;
+	cout << "    LA Yu Fung       22177271A    204           D" << endl;
+}
 
 	int main() {
 		string filename;
@@ -589,8 +596,9 @@ void borrowBook(vector<book>& books, borrower* borrowers, int numBorrowers) {
 				break;
 			case 3:
 				cout << "*********************************\n";
-				"Borrow book(s)";
+				cout << "*********Borrow book(s)**********\n";
 				borrowBook(books, borrowers, numBorrowers);
+				cout << "*********************************\n";
 				break;
 			case 4:
 				returnbook(filename_borrow, borrowers, numBorrowers, books, numOfBooksRead);
@@ -612,8 +620,10 @@ void borrowBook(vector<book>& books, borrower* borrowers, int numBorrowers) {
 				//
 				break;
 			case 6:
-				//
-				break;
+				cout << "*********************************\n";
+				cout << "***********Member list***********\n";
+				Member_list();
+				cout << "*********************************\n";
 			case 7:
 				char confirmExit;
 				do {
