@@ -88,6 +88,11 @@ public:
 	{
 		borrowCount++;
 	}
+
+	int getBorrowCount() const
+	{
+		return borrowCount;
+	}
 };
 
 
@@ -635,6 +640,27 @@ void borrowBook(vector<book>& books, borrower* borrowers, int numBorrowers) {
 	}
 }
 
+vector<book> top_books(const vector<book>& books, int numBooks)
+{
+	vector<book> sortedBooks(books, books + numBooks);
+	sort(sortedBooks.begin(), sortedBooks.end(), [](const book& a, const book& b) {
+		return a.getBorrowCount() > b.getBorrowCount();
+		});
+
+	vector<book> top5Books(sortedBooks.begin(), sortedBooks.begin() + min(5, numBooks));
+	return top5Books;
+}
+
+void print_top_books(const vector<book>& top5Books)
+{
+	for (size_t i = 0; i < top5Books.size(); ++i)
+	{
+		cout << (i + 1) << ". [" << top5Books[i].getId() << "] "
+			<< top5Books[i].getTitle() << " has been borrowed for "
+			<< top5Books[i].getBorrowCount() << " times." << endl;
+	}
+}
+
 void Member_list() {
 	cout << "   Student name     Student ID   Class   Tutorial group" << endl;
 	cout << "   CHEN Junjie       22017785A    201           C" << endl;
@@ -680,7 +706,7 @@ void Member_list() {
 			"[2] Manage borrowers \n"
 			"[3] Borrow book(s) \n"
 			"[4] Return book(s) \n"
-			"[5] Useful feature(s) added \n"
+			"[5] Popular books \n"
 			"[6] Member List \n"
 			"[7] Exit \n"
 			"********************************* \n"
