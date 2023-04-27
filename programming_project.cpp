@@ -322,7 +322,46 @@ public:
 				break;
 			case 4:
 				//function of R1.4
-			
+			{
+				string id = books[0].getId();;
+				cout << "Enter ID of book to : ";
+				cin >> id;
+				int bookIndex = findBookBybookId(&books, id);
+				if (bookIndex == -1) {
+					cout << "Error: Book not found.\n";
+					return;
+				}
+				book* bookPtr = &books[bookIndex];
+
+				if (bookPtr == nullptr) {
+					cout << "Error: Book not found.\n";
+					return;
+				}
+
+				cout << "Book found!\n";
+				cout << "ID: " << id << endl;
+				cout << "Title: " << book.title << endl;
+				cout << "Author(s): ";
+				for (size_t i = 0; i < b.authors.size(); i++) {
+					cout << b.authors[i];
+					if (i != b.authors.size() - 1) {
+						cout << "; ";
+					}
+				}
+				cout << endl;
+				cout << "Publisher: " << b.publisher << endl;
+				cout << "Year: " << b.year << endl;
+				char choice;
+				cout << "Are you sure you want to delete this book? (Y/N): ";
+				cin >> choice;
+				if (choice == 'Y' || choice == 'y') {
+					bookList.erase(bookList.begin() + (bookPtr - &bookList[0]));
+					cout << "Book removed successfully!\n";
+				}
+				else {
+					cout << "No book removed.\n";
+				}
+			}
 				break;
 			case 5:
 				//function of R1.5
