@@ -450,62 +450,65 @@ void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 }
 	
 	
-	/*
-	void borrow_book(string file) {
-		string borrowerID;
-		cout << "Enter the borrower's ID: ";
-		cin >> borrowerID;
+void borrowBook(vector<book>& books, borrower* borrowers, int numBorrowers) {
+	// Prompt for borrower ID
+	string borrowerId;
+	cout << "Please enter borrower ID: ";
+	cin >> borrowerId;
 
-		// Check if the borrower ID is valid
-		int numRecords = readline(file, borrowerID);
-		if (numRecords == 0) {
-			cout << "No record found for borrower ID " << borrowerID << endl;
-			return;
-		}
-
-		// Check if the borrower has reached the maximum number of borrowed books
-		int numBorrowedBooks = readline(file, borrowerID + ",1");
-		if (numBorrowedBooks >= 5) {
-			cout << "Borrower has already borrowed the maximum number of books." << endl;
-			return;
-		}
-
-		// Allow the user to input book IDs and borrow the books if they are available
-		string bookID;
-		int numBooksBorrowed = 0;
-		char userChoice;
-		do {
-			cout << "Enter the book ID: ";
-			cin >> bookID;
-
-			// Check if the book ID is valid
-			int numRecords = readline(file, bookID);
-			if (numRecords == 0) {
-				cout << "No record found for book ID " << bookID << endl;
-				continue;
-			}
-
-			// Check if the book is available
-			numRecords = readline(file, bookID + ",0");
-			if (numRecords == 0) {
-				cout << "Book " << bookID << " is not available for borrowing." << endl;
-				continue;
-			}
-
-			// Update the book's availability and add the book to the borrower's list of borrowed books
-			add_data(borrowerID + "," + bookID, borrowerID, file);
-			numBooksBorrowed++;
-
-			cout << "Do you want to borrow another book? (Y/N): ";
-			cin >> userChoice;
-			cin.ignore();
-		} while (tolower(userChoice) == 'y' && numBooksBorrowed + numBorrowedBooks < 5);
-
-		// Display the main menu
-		
+	// Check if borrower ID is valid
+	int borrowerIndex = findBorrowerByUserId(borrowers, numBorrowers, borrowerId);
+	if (borrowerIndex < 0) {
+		cout << "Invalid borrower ID." << endl;
+		return;
 	}
 
-	*/
+	// Check if borrower has quota to borrow more books
+	int remainingQuota = 5 - borrowers[borrowerIndex].borrow;
+	if (remainingQuota <= 0) {
+		cout << "The borrower has used up their quota." << endl;
+		return;
+	}
+
+	// Prompt for book IDs and borrow them
+	int numBooksBorrowed = 0;
+	while (remainingQuota > 0) {
+		string bookId;
+		cout << "Please enter book ID to borrow (or 'q' to quit): ";
+		cin >> bookId;
+
+		if (bookId == "q") {
+			break;
+		}
+
+		int bookIndex = findBookBybookId(books, bookId);
+		if (bookIndex < 0) {
+			cout << "Invalid book ID." << endl;
+			continue;
+		}
+
+		book& selectedBook = books[bookIndex];
+		if (!selectedBook.isAvailable()) {
+			cout << "The book is not available." << endl;
+			continue;
+		}
+
+		// Update book availability and borrower information
+		selectedBook.setAvailability(false);
+		selectedBook.setBorrower(borrowerId);
+		selectedBook.incrementBorrowCount();
+		borrowers[borrowerIndex].borrow++;
+		remainingQuota--;
+		numBooksBorrowed++;
+	}
+
+	if (numBooksBorrowed > 0) {
+		cout << "Successfully borrowed " << numBooksBorrowed << " book(s)." << endl;
+	}
+	else {
+		cout << "No books were borrowed." << endl;
+	}
+}
 
 
 	int main() {
@@ -563,7 +566,9 @@ void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 				manageborrower(borrowers, numBorrowers);
 				break;
 			case 3:
-				
+				cout << "*********************************\n";
+				"Borrow book(s)";
+				borrowBook(books, borrowers, numBorrowers);
 				break;
 			case 4:
 				returnbook(filename_borrow, borrowers, numBorrowers, books, numOfBooksRead);
