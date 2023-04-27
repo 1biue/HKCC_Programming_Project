@@ -16,6 +16,18 @@ struct borrower {
 
 using namespace std;
 
+vector<book> bookList;
+bool isIdUnique(string id) {
+	string bid = books[0].getId();;
+	for (book books : bookList) {
+		if (bid == id) {
+			return false;
+		}
+	}
+	return true;
+}
+
+
 class book
 {
 private:
@@ -233,7 +245,7 @@ public:
 		}
 		return -1; // If not found
 	}
-
+	int result;
 	int findBookBybookId(vector<book>& books, const string& userId) {
 		
 		vector<book>::iterator it;
@@ -243,7 +255,7 @@ public:
 				return it - books.begin();
 			}
 		}
-
+		result = -1;
 		return -1; // If not found
 	}
 
@@ -318,14 +330,76 @@ public:
 
 			case 3:
 				//function of R1.3
-
+			
 				break;
 			case 4:
 				//function of R1.4
-			
+			{
+				string id = books[0].getId();;
+				string title = books[0].getTitle();;
+				string authors = books[0].getAuthor();;
+				string publisher = books[0].getPublisher();;
+				int year = books[0].getYear();;
+				cout << "Enter ID of book to : ";
+				cin >> id;
+				int bookIndex = result;
+				if (bookIndex == -1) {
+					cout << "Error: Book not found.\n";
+					return;
+				}
+				book* bookPtr = const_cast<book*>(&books[bookIndex]);
+
+				if (bookPtr == nullptr) {
+					cout << "Error: Book not found.\n";
+					return;
+				}
+
+				cout << "Book found!\n";
+				cout << "ID: " << id << endl;
+				cout << "Title: " << title << endl;
+				cout << "Author(s): ";
+				for (size_t i = 0; i < authors.size(); i++) {
+					cout << authors[i];
+					if (i != authors.size() - 1) {
+						cout << "; ";
+					}
+				}
+				cout << endl;
+				cout << "Publisher: " << publisher << endl;
+				cout << "Year: " << year << endl;
+				char choice;
+				cout << "Are you sure you want to delete this book? (Y/N): ";
+				cin >> choice;
+				if (choice == 'Y' || choice == 'y') {
+					bookList.erase(bookList.begin() + (bookPtr - &bookList[0]));
+					cout << "Book removed successfully!\n";
+				}
+				else {
+					cout << "No book removed.\n";
+				}
+			}
+			cout << "*** Manage Books *** \n"
+				"[1] Display books \n"
+				"[2] Search book \n"
+				"[3] Add book \n"
+				"[4] Remove book \n"
+				"[5] Back \n"
+				"************************ \n"
+				"Option (1 - 5):";
+			cin >> answer;
 				break;
 			case 5:
 				//function of R1.5
+				int main();
+				cout << "*** Manage Books *** \n"
+					"[1] Display books \n"
+					"[2] Search book \n"
+					"[3] Add book \n"
+					"[4] Remove book \n"
+					"[5] Back \n"
+					"************************ \n"
+					"Option (1 - 5):";
+				cin >> answer;
 				break;
 			default:
 				cout << "Enter number between 1-5 only \n"
