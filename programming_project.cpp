@@ -340,9 +340,11 @@ void returnbook(const string& file, borrower* borrowers, int numBorrowers, vecto
 	do {
 		cout << "*********************************\n"
 			<< "*** Book Returning ***\n"
-			<< "Please input your borrower_ID: ";
+			<< "Please input your borrower_ID (or 'q' to MainMenu): ";
 		cin >> userId;
-
+		if (userId == "q") {
+			break;
+		}
 		int index = findBorrowerByUserId(borrowers, numBorrowers, userId);
 
 		while (index < 0) {
@@ -357,8 +359,11 @@ void returnbook(const string& file, borrower* borrowers, int numBorrowers, vecto
 			<< ", Number: " << borrowers[index].number
 			<< ", Borrow: " << borrowers[index].borrow << endl;
 
-		cout << "Enter the returning book ID: ";
+		cout << "Enter the returning book ID (or 'q' to MainMenu): ";
 		cin >> bookid;
+		if (bookid == "q") {
+			break;
+		}
 
 		// Check if the borrower has borrowed the book
 		vector<book>::iterator it;
