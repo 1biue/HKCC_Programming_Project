@@ -664,9 +664,8 @@ void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 void borrowBook(vector<book>& books, borrower* borrowers, int numBorrowers) {
 	// Prompt for borrower ID
 	string borrowerId;
-	cout << "Please enter borrower ID: ";
+	cout << "Please enter borrower ID (or 'q' to MainMenu): ";
 	cin >> borrowerId;
-
 	// Check if borrower ID is valid
 	int borrowerIndex = findBorrowerByUserId(borrowers, numBorrowers, borrowerId);
 	if (borrowerIndex < 0) {
@@ -681,11 +680,12 @@ void borrowBook(vector<book>& books, borrower* borrowers, int numBorrowers) {
 		return;
 	}
 
-	// Prompt for book IDs and borrow them
+	// Prompt for [book IDs](poe://www.poe.com/_api/key_phrase?phrase=book%20IDs&prompt=Tell%20me%20more%20about%20book%20IDs.) and borrow them
 	int numBooksBorrowed = 0;
-	while (remainingQuota > 0) {
+	bool continueBorrowing = true;
+	while (remainingQuota > 0 && continueBorrowing) {
 		string bookId;
-		cout << "Please enter book ID to borrow (or 'q' to quit): ";
+		cout << "Please enter book ID to borrow (or 'q' to MainMenu): ";
 		cin >> bookId;
 
 		if (bookId == "q") {
@@ -704,20 +704,24 @@ void borrowBook(vector<book>& books, borrower* borrowers, int numBorrowers) {
 			continue;
 		}
 
-		// Update book availability and borrower information
+		// Update [book availability](poe://www.poe.com/_api/key_phrase?phrase=book%20availability&prompt=Tell%20me%20more%20about%20book%20availability.) and [borrower information](poe://www.poe.com/_api/key_phrase?phrase=borrower%20information&prompt=Tell%20me%20more%20about%20borrower%20information.)
 		selectedBook.setAvailability(false);
 		selectedBook.setBorrower(borrowerId);
 		selectedBook.incrementBorrowCount();
 		borrowers[borrowerIndex].borrow++;
 		remainingQuota--;
 		numBooksBorrowed++;
-	}
 
-	if (numBooksBorrowed > 0) {
-		cout << "Successfully borrowed " << numBooksBorrowed << " book(s)." << endl;
-	}
-	else {
-		cout << "No books were borrowed." << endl;
+		// Prompt to continue borrowing
+		if (remainingQuota > 0) {
+			cout << "Successfully borrowed " << numBooksBorrowed << " book(s)." << endl;
+			char response;
+			cout << "Continue borrowing? (Y/N): ";
+			cin >> response;
+			if (response != 'Y' && response != 'y') {
+				continueBorrowing = false;
+			}
+		}
 	}
 }
 
@@ -773,6 +777,7 @@ int main() {
 		cout << "Input path to CSV file: ";
 		getline(cin, filename);
 		readCSV(filename);
+		readBookCSV(filename);
 	}
 	else {
 		cout << "No borrower list is imported \n";
@@ -831,6 +836,19 @@ int main() {
 			cout << "*********Borrow book(s)**********\n";
 			borrowBook(books, borrowers, numBorrowers);
 			cout << "*********************************\n";
+			cout << "*** Library Management System *** \n"
+				"[1] Manage books \n"
+				"[2] Manage borrowers \n"
+				"[3] Borrow book(s) \n"
+				"[4] Return book(s) \n"
+				"[5] Useful feature(s) added \n"
+				"[6] Member List \n"
+				"[7] Exit \n"
+				"********************************* \n"
+				"Option(1 - 7) :";
+			cin >> mode;
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
 			break;
 		case 4:
 			returnbook(filename_borrow, borrowers, numBorrowers, books, numOfBooksRead);
@@ -883,6 +901,7 @@ int main() {
 			cin >> mode;
 			cin.clear();
 			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			break;
 		case 7:
 			char confirmExit;
 			do {
