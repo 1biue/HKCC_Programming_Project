@@ -680,7 +680,7 @@ void borrowBook(vector<book>& books, borrower* borrowers, int numBorrowers) {
 		return;
 	}
 
-	// Prompt for [book IDs](poe://www.poe.com/_api/key_phrase?phrase=book%20IDs&prompt=Tell%20me%20more%20about%20book%20IDs.) and borrow them
+	// Prompt for [book IDs] and borrow them
 	int numBooksBorrowed = 0;
 	bool continueBorrowing = true;
 	while (remainingQuota > 0 && continueBorrowing) {
@@ -704,7 +704,7 @@ void borrowBook(vector<book>& books, borrower* borrowers, int numBorrowers) {
 			continue;
 		}
 
-		// Update [book availability](poe://www.poe.com/_api/key_phrase?phrase=book%20availability&prompt=Tell%20me%20more%20about%20book%20availability.) and [borrower information](poe://www.poe.com/_api/key_phrase?phrase=borrower%20information&prompt=Tell%20me%20more%20about%20borrower%20information.)
+		// Update [book availability] and [borrower information]
 		selectedBook.setAvailability(false);
 		selectedBook.setBorrower(borrowerId);
 		selectedBook.incrementBorrowCount();
