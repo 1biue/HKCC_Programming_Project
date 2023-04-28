@@ -332,26 +332,34 @@ void displayMenu(const vector<book>& books) {//R1
 	}
 }
 
-void returnbook(const string& file, borrower* borrowers, int numBorrowers, vector<book>& books, int numofbook) {//R4
-	string userId;
-	string bookid;
-	string ynn;
+//R4
+void returnbook(const string& file, borrower* borrowers, int numBorrowers, vector<book>& books, int numofbook) {
+	string userId;// Variable to store borrower ID
+	string bookid;// Variable to store book ID
+	string ynn;// Variable to store user input for continuing or exiting the function
 
+	// Loop to allow returning of multiple books
 	do {
 		cout << "*********************************\n"
 			<< "*** Book Returning ***\n"
 			<< "Please input your borrower_ID (or 'q' to MainMenu): ";
-		cin >> userId;
+		cin >> userId;// Prompt user for borrower ID
+
+		// Check if user wants to exit the function
 		if (userId == "q") {
 			break;
 		}
-		int index = findBorrowerByUserId(borrowers, numBorrowers, userId);
 
+		int index = findBorrowerByUserId(borrowers, numBorrowers, userId);// Find index of borrower with given ID
+
+		// Loop to handle case when borrower is not found
 		while (index < 0) {
 			cout << "Borrower with user ID " << userId << " not found." << endl
 				<< "Please input your borrower_ID: ";
 			cin >> userId;
 		}
+
+		// Display borrower information
 		cout << "Borrower with user ID " << userId << " found: " << endl;
 		cout << "Borrower_ID:" << borrowers[index].borrowid
 			<< "Lastname: " << borrowers[index].lastname
@@ -360,7 +368,9 @@ void returnbook(const string& file, borrower* borrowers, int numBorrowers, vecto
 			<< ", Borrow: " << borrowers[index].borrow << endl;
 
 		cout << "Enter the returning book ID (or 'q' to MainMenu): ";
-		cin >> bookid;
+		cin >> bookid;// Prompt user for book ID
+
+		// Check if user wants to exit the function
 		if (bookid == "q") {
 			break;
 		}
@@ -368,33 +378,32 @@ void returnbook(const string& file, borrower* borrowers, int numBorrowers, vecto
 		// Check if the borrower has borrowed the book
 		vector<book>::iterator it;
 		bool bookFound = false;
+
+		// Loop through books vector to find book with given ID
 		for (it = books.begin(); it != books.end(); it++) {
 			if (it->getId() == bookid) {
-				if (it->getBorrower() == userId) {
+				if (it->getBorrower() == userId) {// Check if book is borrowed by the borrower
 					it->setBorrower("");
-					it->setAvailability(true);
-					borrowers[index].borrow -= 1;
-					cout << "Book returned successfully." << endl;
+					it->setAvailability(true);// Set book availability to true
+					borrowers[index].borrow -= 1;// Decrease borrower's borrow count
+					cout << "Book returned successfully." << endl;// Display success message
 				}
 				else {
-					cout << "Book not borrowed by this borrower." << endl;
+					cout << "Book not borrowed by this borrower." << endl;// Display error message
 				}
 				bookFound = true;
 				break;
 			}
 		}
 
+		// Loop continues if user inputs "y" or "Y"
 		if (!bookFound) {
-			cout << "Borrowed book not found" << endl;
+			cout << "Borrowed book not found" << endl;// Display error message if book is not found
 		}
-
 		cout << "Do you want to enter another book ID? (Y/N): ";
-		cin >> ynn;
+		cin >> ynn;// Prompt user if they want to input another book ID
 	} while (ynn != "n" && ynn != "N");
 }
-
-
-
 
 int numOfBooksRead = 0;
 vector<book> books;
@@ -503,9 +512,12 @@ void addBorrower(borrower*& borrowers, int& numBorrowers, const string& borrower
 	numBorrowers++;
 }
 
+//R2
+void manageborrower(borrower*& borrowers, int& numBorrowers) {
 
-void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
-	int answer;
+	int answer;// Initialize answer variable for user input
+
+	// Display the manage borrowers menu
 	cout << "*** Manage Borrowers *** \n"
 		"[1] Display borrowers \n"
 		"[2] Search borrower \n"
@@ -515,14 +527,16 @@ void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 		"************************ \n"
 		"Option (1 - 5):";
 
-	cin >> answer;
+	cin >> answer;// Get user input for menu option
+
+	// Initialize variables for borrower search and removal
 	string im;
 	string searchid;
 	int removeIndex;
 
-
+	// Loop until user chooses to go back to previous menu
 	while (true) {
-		switch (answer) {
+		switch (answer) {// [Switch statement] for handling user's menu option choice
 		case 1:
 			// Sort the borrowers array
 			sort(borrowers, borrowers + numBorrowers, compareBorrowers);
@@ -557,6 +571,7 @@ void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 			cin >> searchid;
 			int index = findBorrowerByUserId(borrowers, numBorrowers, searchid);
 
+			// Display borrower information if found, otherwise display not found message
 			if (index >= 0) {
 				cout << "Borrower with user ID " << searchid << " found: " << endl;
 				cout << "Borrower_ID:" << borrowers[index].borrowid
@@ -585,7 +600,7 @@ void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 			cin >> lastName;
 			cout << "Enter the first name: ";
 			cin.ignore();
-			getline(cin, firstName);
+			getline(cin, firstName);// Use getline to get the entire first name, including spaces
 			cout << "Enter the contact number: ";
 			cin >> contactNumber;
 
@@ -631,6 +646,8 @@ void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 				"Input the borrowerID:";
 			cin >> im;
 			removeIndex = findBorrowerByUserId(borrowers, numBorrowers, im);
+
+			// Remove borrower if found and has no books borrowed, otherwise display error message
 			if (removeIndex >= 0 && borrowers[removeIndex].borrow == 0) {
 				removeBorrowerById(borrowers, numBorrowers, im);
 				cout << "Borrower with ID " << im << " has been successfully removed." << endl;
@@ -665,12 +682,14 @@ void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 	}
 }
 
-
+//R3
 void borrowBook(vector<book>& books, borrower* borrowers, int numBorrowers) {
+
 	// Prompt for borrower ID
 	string borrowerId;
 	cout << "Please enter borrower ID (or 'q' to MainMenu): ";
 	cin >> borrowerId;
+
 	// Check if borrower ID is valid
 	int borrowerIndex = findBorrowerByUserId(borrowers, numBorrowers, borrowerId);
 	if (borrowerIndex < 0) {
@@ -768,38 +787,49 @@ void Member_list() {
 }
 
 int main() {
-	string filename;
-	string filename_borrow;
-	char answer;
-	int mode;
-	borrower* borrowers = nullptr;
-	int numBorrowers = 0;
+	string filename;// stores the path of the book list to be read from a file
+	string filename_borrow;// stores the path of the borrower list to be read from a file
+	char answer;// stores the user's answer
+	int mode;// stores the operation mode selected by the user
+	borrower* borrowers = nullptr;// stores a pointer to the list of borrowers, initialized to nullptr
+	int numBorrowers = 0;// stores the number of borrowers read from the file
 
+	// Prompt the user whether to import the book list from a file
 	cout << "Import book list from file? [Y/N]: ";
 	cin >> answer;
 	cin.ignore();
+
+	// Prompt the user to input the path of the book list and read the book list from the file
 	if (tolower(answer) == 'y') {
 		cout << "Input path to CSV file: ";
 		getline(cin, filename);
 		readCSV(filename);
 		readBookCSV(filename);
 	}
+
+	// Display a message indicating that the book list is not imported from a file
 	else {
 		cout << "No borrower list is imported \n";
 	}
-	//
+	
+	// Prompt the user whether to import the borrower list from a file
 	cout << "Import borrower list from file? [Y/N]: ";
 	cin >> answer;
 	cin.ignore();
+
+	//Prompt the user to input the path of the borrower list, read the borrower list from the file, and assign the return value to the numBorrowers variable
 	if (tolower(answer) == 'y') {
 		cout << "Input path to CSV file: ";
 		getline(cin, filename_borrow);
 		numBorrowers = readCSV_borrow(filename_borrow, borrowers); // Assign the return value to numBorrowers
 	}
+
+	// Display a message indicating that the borrower list is not imported from a file
 	else {
 		cout << "No borrower list is imported \n";
 	}
 
+	// Prompt the user to select an operation mode
 	cout << "*** Library Management System *** \n"
 		"[1] Manage books \n"
 		"[2] Manage borrowers \n"
@@ -815,6 +845,7 @@ int main() {
 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 	vector<book> top5 = top_books(books, books.size());
 
+	// Execute the corresponding operation based on the user's selected operation mode, until the user chooses to quit the program
 	while (true) {
 		switch (mode) {
 		case 1:
