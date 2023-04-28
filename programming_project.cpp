@@ -330,7 +330,39 @@ public:
 
 			case 3:
 				//function of R1.3
-			
+				void addBook(vector<book>&books) {
+					// Get details from user input
+					string id, title, author, publisher;
+					int year;
+					cout << "Enter ID: ";
+					getline(cin, id);
+					cout << "Enter title: ";
+					getline(cin, title);
+					cout << "Enter author(s) separated by semicolon (;): ";
+					getline(cin, author);
+					cout << "Enter publisher: ";
+					getline(cin, publisher);
+					cout << "Enter year: ";
+					cin >> year;
+
+					// Check if ID is unique
+					for (const Book& book : books) {
+						if (book.getId() == id) {
+							cout << "Error: ID already exists.\n";
+							return;
+						}
+					}
+
+					// Check if year is positive
+					if (year <= 0) {
+						cout << "Error: Invalid year.\n";
+						return;
+					}
+
+					// Create new book object and add to vector
+					books.emplace_back(id, title, author, publisher, year, true);
+					cout << "Book added successfully.\n";
+				}
 				break;
 			case 4:
 				//function of R1.4
