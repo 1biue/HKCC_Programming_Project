@@ -16,85 +16,73 @@ struct borrower {
 
 using namespace std;
 
-vector<book> bookList;
-bool isIdUnique(string id) {
-	string bid = books[0].getId();;
-	for (book books : bookList) {
-		if (bid == id) {
-			return false;
-		}
-	}
-	return true;
-}
-
-
 class book
 {
 private:
-    string bookid;
-    string title;
-    string author;
-    string publisher;
-    int year;
-    bool available;
-    string borrower;
-    int borrowCount = 0;
+	string bookid;
+	string title;
+	string author;
+	string publisher;
+	int year;
+	bool available;
+	string borrower;
+	int borrowCount = 0;
 
 public:
-    book(string bookid, string title, string author, string publisher, int year)
-    {
-        this->bookid = bookid;
-        this->title = title;
-        this->author = author;
-        this->publisher = publisher;
-        this->year = year;
+	book(string bookid, string title, string author, string publisher, int year)
+	{
+		this->bookid = bookid;
+		this->title = title;
+		this->author = author;
+		this->publisher = publisher;
+		this->year = year;
 		this->available = true;
-    }
+	}
 
-    string getId() const
-    {
-        return bookid;
-    }
+	string getId() const
+	{
+		return bookid;
+	}
 
-    string getTitle() const
-    {
-        return title;
-    }
+	string getTitle() const
+	{
+		return title;
+	}
 
-    string getAuthor() const
-    {
-        return author;
-    }
+	string getAuthor() const
+	{
+		return author;
+	}
 
-    string getPublisher() const
-    {
-        return publisher;
-    }
+	string getPublisher() const
+	{
+		return publisher;
+	}
 
-    int getYear() const
-    {
-        return year;
-    }
+	int getYear() const
+	{
+		return year;
+	}
 
-    bool isAvailable() const
-    {
-        return available;
-    }
+	bool isAvailable() const
+	{
+		return available;
+	}
 
 	void setAvailability(bool available)
 	{
 		this->available = available;
 	}
 
-    string getBorrower()
-    {
-        return borrower;
-    }
+	string getBorrower()
+	{
+		return borrower;
+	}
 
-    void setBorrower(string borrower)
-    {
-        this->borrower = borrower;
-    }
+	void setBorrower(string borrower)
+	{
+		this->borrower = borrower;
+	}
 
 	void incrementBorrowCount()
 	{
@@ -109,274 +97,187 @@ public:
 
 
 
-	int extractFields(string line, char fields[][101]) {
-		int numFields = 0;
-		bool inQuotes = false;
-		string field = "";
+int extractFields(string line, char fields[][101]) {
+	int numFields = 0;
+	bool inQuotes = false;
+	string field = "";
 
-		for (size_t i = 0; i < line.length(); ++i) {
-			char current = line[i];
-			if (current == '"') {
-				inQuotes = !inQuotes;
-			}
-			else if (current == ',' && !inQuotes) {
-				strncpy_s(fields[numFields++], 101, field.c_str(), 100);
-				field.clear();
-			}
-			else {
-				field += current;
-			}
+	for (size_t i = 0; i < line.length(); ++i) {
+		char current = line[i];
+		if (current == '"') {
+			inQuotes = !inQuotes;
 		}
-		if (!field.empty()) {
+		else if (current == ',' && !inQuotes) {
 			strncpy_s(fields[numFields++], 101, field.c_str(), 100);
+			field.clear();
 		}
-
-		return numFields;
+		else {
+			field += current;
+		}
+	}
+	if (!field.empty()) {
+		strncpy_s(fields[numFields++], 101, field.c_str(), 100);
 	}
 
-	void readCSV(string filename) {
-		fstream inFile;                // for handling file
-		string line;                // for storing 1 line in a file
-		char fields[10][101] = {};    // for storing extracted fields (assume max. 10 fields per line, each field has max. 100 char)
-		int numFields;                // for storing number of fields per line
-		int countRecords = 0;        // for counting the number of records in csv file
+	return numFields;
+}
 
-		inFile.open(filename);
-		if (!inFile.is_open()) {
-			cout << "Cannot open file "" << filename << ""\n";
-			return;
-		}
+void readCSV(string filename) {
+	fstream inFile;                // for handling file
+	string line;                // for storing 1 line in a file
+	char fields[10][101] = {};    // for storing extracted fields (assume max. 10 fields per line, each field has max. 100 char)
+	int numFields;                // for storing number of fields per line
+	int countRecords = 0;        // for counting the number of records in csv file
 
-		while (getline(inFile, line, '\n')) {                // read line by line until end of file
-			numFields = extractFields(line, fields);        // call function to extract fields from the line
-
-			for (int i = 0; i < numFields; i++)                //  display the fields of this line
-				cout << i << ": " << fields[i] << endl;        //  you should modify this code for fields processing
-			cout << "\n\n";                                    // *** e.g. assign fields to data members of an object
-
-			countRecords++;
-		}
-
-		cout << countRecords << " Record(s) imported.\n";
-		inFile.close();
+	inFile.open(filename);
+	if (!inFile.is_open()) {
+		cout << "Cannot open file "" << filename << ""\n";
+		return;
 	}
 
-	int countLines(const string& filename) {
-		ifstream inFile(filename);
-		int count = 0;
-		string line;
+	while (getline(inFile, line, '\n')) {                // read line by line until end of file
+		numFields = extractFields(line, fields);        // call function to extract fields from the line
 
-		if (!inFile.is_open()) {
-			cout << "Cannot open file \"" << filename << "\"\n";
-			return -1;
-		}
+		for (int i = 0; i < numFields; i++)                //  display the fields of this line
+			cout << i << ": " << fields[i] << endl;        //  you should modify this code for fields processing
+		cout << "\n\n";                                    // *** e.g. assign fields to data members of an object
 
-		while (getline(inFile, line)) {
-			count++;
-		}
-
-		inFile.close();
-		return count;
+		countRecords++;
 	}
 
-	int readCSV_borrow(string filename, borrower*& borrowers) {
-		int numLines = countLines(filename);
-		if (numLines < 0) {
-			return -1;
-		}
+	cout << countRecords << " Record(s) imported.\n";
+	inFile.close();
+}
 
-		borrowers = new borrower[numLines];
+int countLines(const string& filename) {
+	ifstream inFile(filename);
+	int count = 0;
+	string line;
 
-		fstream inFile;
-		string line;
-		char fields[10][101] = {};
-		int numFields;
-		int countRecords = 0;
-
-		
-
-		inFile.open(filename);
-		if (!inFile.is_open()) {
-			cout << "Cannot open file \"" << filename << "\"\n";
-			return -1;
-		}
-
-		while (getline(inFile, line, '\n')) {
-			numFields = extractFields(line, fields);
-
-			if (numFields >= 3) {
-				stringstream id;
-				id << std::setw(4) << std::setfill('0') << countRecords;
-				std::string in_id = id.str();
-
-				borrower b;
-				b.borrowid = "HKCC" + in_id;
-				b.lastname = fields[0];
-				b.firstname = fields[1];
-				b.number = fields[2];
-				b.borrow = 0; // You can set this to a default value or read it from the CSV if available
-				borrowers[countRecords] = b;
-			}
-
-			countRecords++;
-		}
-
-		cout << countRecords << " Record(s) imported.\n";
-		inFile.close();
-
-		// Print the borrower details
-		for (int i = 0; i < countRecords; i++) {
-			cout<< "Borrower_ID:" << borrowers[i].borrowid
-				<< ", Lastname: " << borrowers[i].lastname
-				<< ", Firstname: " << borrowers[i].firstname
-				<< ", Number: " << borrowers[i].number
-				<< ", Borrow: " << borrowers[i].borrow << endl;
-		}
-
-
-		return countRecords;
+	if (!inFile.is_open()) {
+		cout << "Cannot open file \"" << filename << "\"\n";
+		return -1;
 	}
 
-	int findBorrowerByUserId(const borrower* borrowers, int numBorrowers, const string& userId) {
-		for (int i = 0; i < numBorrowers; i++) {
-			if (borrowers[i].borrowid == userId) {
-				return i;
-			}
-		}
-		return -1; // If not found
-	}
-	int result;
-	int findBookBybookId(vector<book>& books, const string& userId) {
-		
-		vector<book>::iterator it;
-
-		for (it = books.begin(); it != books.end(); it++) {
-			if (it -> getId() == userId) {
-				return it - books.begin();
-			}
-		}
-		result = -1;
-		return -1; // If not found
+	while (getline(inFile, line)) {
+		count++;
 	}
 
-	/// <summary>
-	/// file reading and editing
-	/// </summary>
+	inFile.close();
+	return count;
+}
 
-	void displayMenu(const vector<book>& books) {//R1
-		int answer;
-		int Book_ID;
-		cout << "*** Manage Books *** \n"
-			"[1] Display books \n"
-			"[2] Search book \n"
-			"[3] Add book \n"
-			"[4] Remove book \n"
-			"[5] Back \n"
-			"************************ \n"
-			"Option (1 - 5):";
+int readCSV_borrow(string filename, borrower*& borrowers) {
+	int numLines = countLines(filename);
+	if (numLines < 0) {
+		return -1;
+	}
 
-		cin >> answer;
-		string search_query;
-		int num_books = sizeof(books) / sizeof(books[0]);
+	borrowers = new borrower[numLines];
 
-		while (true) {
-			switch (answer) {
-			case 1:
-				cout << "ID         Title                          Author                        Publisher                     Year" << endl;
-				cout << "------------------------------------------------------------------------------------------------------------" << endl;
+	fstream inFile;
+	string line;
+	char fields[10][101] = {};
+	int numFields;
+	int countRecords = 0;
 
-				for (const book& b : books) {
-					sort(b.getId().begin(), b.getId().end());
-					cout << left << setw(11) << b.getId()
-						<< setw(30) << b.getTitle()
-						<< setw(30) << b.getAuthor()
-						<< setw(30) << b.getPublisher()
-						<< b.getYear() << endl;
-				}
-				cout << "*** Manage Books *** \n"
-					"[1] Display books \n"
-					"[2] Search book \n"
-					"[3] Add book \n"
-					"[4] Remove book \n"
-					"[5] Back \n"
-					"************************ \n"
-					"Option (1 - 5):";
-				cin >> answer;
-				break;
 
-			case 2: {
-				//function of R1.2				
-				cout << "Enter a string with a maximum of 50 characters: ";
-				getline(cin, search_query);
 
-				if (search_query.length() > 50) {
-					cout << "Error: String exceeds maximum length of 50 characters." << endl;
-					cout << "Enter a string with a maximum of 50 characters: ";
-					getline(cin, search_query);
-				}
+	inFile.open(filename);
+	if (!inFile.is_open()) {
+		cout << "Cannot open file \"" << filename << "\"\n";
+		return -1;
+	}
 
-				transform(search_query.begin(), search_query.end(), search_query.begin(), ::tolower);
+	while (getline(inFile, line, '\n')) {
+		numFields = extractFields(line, fields);
 
-				cout << "*** Manage Books *** \n"
-					"[1] Display books \n"
-					"[2] Search book \n"
-					"[3] Add book \n"
-					"[4] Remove book \n"
-					"[5] Back \n"
-					"************************ \n"
-					"Option (1 - 5):";
+		if (numFields >= 3) {
+			stringstream id;
+			id << std::setw(4) << std::setfill('0') << countRecords;
+			std::string in_id = id.str();
 
-				break;
+			borrower b;
+			b.borrowid = "HKCC" + in_id;
+			b.lastname = fields[0];
+			b.firstname = fields[1];
+			b.number = fields[2];
+			b.borrow = 0; // You can set this to a default value or read it from the CSV if available
+			borrowers[countRecords] = b;
+		}
 
-			case 3:
-				//function of R1.3
-				
-				break;
-			case 4:
-				//function of R1.4
-			{
-				string id = books[0].getId();;
-				string title = books[0].getTitle();;
-				string authors = books[0].getAuthor();;
-				string publisher = books[0].getPublisher();;
-				int year = books[0].getYear();;
-				cout << "Enter ID of book to : ";
-				cin >> id;
-				int bookIndex = result;
-				if (bookIndex == -1) {
-					cout << "Error: Book not found.\n";
-					return;
-				}
-				book* bookPtr = const_cast<book*>(&books[bookIndex]);
+		countRecords++;
+	}
 
-				if (bookPtr == nullptr) {
-					cout << "Error: Book not found.\n";
-					return;
-				}
+	cout << countRecords << " Record(s) imported.\n";
+	inFile.close();
 
-				cout << "Book found!\n";
-				cout << "ID: " << id << endl;
-				cout << "Title: " << title << endl;
-				cout << "Author(s): ";
-				for (size_t i = 0; i < authors.size(); i++) {
-					cout << authors[i];
-					if (i != authors.size() - 1) {
-						cout << "; ";
-					}
-				}
-				cout << endl;
-				cout << "Publisher: " << publisher << endl;
-				cout << "Year: " << year << endl;
-				char choice;
-				cout << "Are you sure you want to delete this book? (Y/N): ";
-				cin >> choice;
-				if (choice == 'Y' || choice == 'y') {
-					bookList.erase(bookList.begin() + (bookPtr - &bookList[0]));
-					cout << "Book removed successfully!\n";
-				}
-				else {
-					cout << "No book removed.\n";
-				}
+	// Print the borrower details
+	for (int i = 0; i < countRecords; i++) {
+		cout << "Borrower_ID:" << borrowers[i].borrowid
+			<< ", Lastname: " << borrowers[i].lastname
+			<< ", Firstname: " << borrowers[i].firstname
+			<< ", Number: " << borrowers[i].number
+			<< ", Borrow: " << borrowers[i].borrow << endl;
+	}
+
+
+	return countRecords;
+}
+
+int findBorrowerByUserId(const borrower* borrowers, int numBorrowers, const string& userId) {
+	for (int i = 0; i < numBorrowers; i++) {
+		if (borrowers[i].borrowid == userId) {
+			return i;
+		}
+	}
+	return -1; // If not found
+}
+
+int findBookBybookId(vector<book>& books, const string& userId) {
+
+	vector<book>::iterator it;
+
+	for (it = books.begin(); it != books.end(); it++) {
+		if (it->getId() == userId) {
+			return it - books.begin();
+		}
+	}
+
+	return -1; // If not found
+}
+
+/// <summary>
+/// file reading and editing
+/// </summary>  
+void displayMenu(const vector<book>& books) {//R1
+	int answer;
+	int Book_ID;
+	cout << "*** Manage Books *** \n"
+		"[1] Display books \n"
+		"[2] Search book \n"
+		"[3] Add book \n"
+		"[4] Remove book \n"
+		"[5] Back \n"
+		"************************ \n"
+		"Option (1 - 5):";
+
+	cin >> answer;
+	string search_query;
+	int num_books = sizeof(books) / sizeof(books[0]);
+	while (true) {
+		switch (answer) {
+		case 1:
+			cout << "ID         Title                          Author                        Publisher                     Year" << endl;
+			cout << "------------------------------------------------------------------------------------------------------------" << endl;
+
+			for (const book& b : books) {
+				sort(b.getId().begin(), b.getId().end());
+				cout << left << setw(11) << b.getId()
+					<< setw(30) << b.getTitle()
+					<< setw(30) << b.getAuthor()
+					<< setw(30) << b.getPublisher()
+					<< b.getYear() << endl;
 			}
 			cout << "*** Manage Books *** \n"
 				"[1] Display books \n"
@@ -387,136 +288,154 @@ public:
 				"************************ \n"
 				"Option (1 - 5):";
 			cin >> answer;
-				break;
-			case 5:
-				//function of R1.5
-				int main();
-				cout << "*** Manage Books *** \n"
-					"[1] Display books \n"
-					"[2] Search book \n"
-					"[3] Add book \n"
-					"[4] Remove book \n"
-					"[5] Back \n"
-					"************************ \n"
-					"Option (1 - 5):";
-				cin >> answer;
-				break;
-			default:
-				cout << "Enter number between 1-5 only \n"
-					"********************************* \n"
-					"Option(1 - 5) :";
-				cin >> answer;
-				cin.clear();
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			break;
+
+		case 2: {
+			//function of R1.2				
+			cout << "Enter a string with a maximum of 50 characters: ";
+			getline(cin, search_query);
+
+			if (search_query.length() > 50) {
+				cout << "Error: String exceeds maximum length of 50 characters." << endl;
+				cout << "Enter a string with a maximum of 50 characters: ";
+				getline(cin, search_query);
 			}
-			}
+
+			transform(search_query.begin(), search_query.end(), search_query.begin(), ::tolower);
+			cout << "*** Manage Books *** \n"
+				"[1] Display books \n"
+				"[2] Search book \n"
+				"[3] Add book \n"
+				"[4] Remove book \n"
+				"[5] Back \n"
+				"************************ \n"
+				"Option (1 - 5):";
+
+			break;
+
+		case 3:break;
+		case 4:
+			//function of R1.4
+			break;
+		case 5:
+			//function of R1.5
+			break;
+		default:
+			cout << "Enter number between 1-5 only \n"
+				"********************************* \n"
+				"Option(1 - 5) :";
+			cin >> answer;
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		}
 		}
 	}
+}
 
-	void returnbook(const string& file, borrower* borrowers, int numBorrowers, vector<book>& books, int numofbook) {//R4
-		string userId;
-		string bookid;
-		string ynn;
+void returnbook(const string& file, borrower* borrowers, int numBorrowers, vector<book>& books, int numofbook) {//R4
+	string userId;
+	string bookid;
+	string ynn;
 
-		do {
-			cout << "*********************************\n"
-				<< "*** Book Returning ***\n"
+	do {
+		cout << "*********************************\n"
+			<< "*** Book Returning ***\n"
+			<< "Please input your borrower_ID: ";
+		cin >> userId;
+
+		int index = findBorrowerByUserId(borrowers, numBorrowers, userId);
+
+		while (index < 0) {
+			cout << "Borrower with user ID " << userId << " not found." << endl
 				<< "Please input your borrower_ID: ";
 			cin >> userId;
+		}
+		cout << "Borrower with user ID " << userId << " found: " << endl;
+		cout << "Borrower_ID:" << borrowers[index].borrowid
+			<< "Lastname: " << borrowers[index].lastname
+			<< ", Firstname: " << borrowers[index].firstname
+			<< ", Number: " << borrowers[index].number
+			<< ", Borrow: " << borrowers[index].borrow << endl;
 
-			int index = findBorrowerByUserId(borrowers, numBorrowers, userId);
+		cout << "Enter the returning book ID: ";
+		cin >> bookid;
 
-			while (index < 0) {
-				cout << "Borrower with user ID " << userId << " not found." << endl
-					<< "Please input your borrower_ID: ";
-				cin >> userId;
-			}
-			cout << "Borrower with user ID " << userId << " found: " << endl;
-			cout << "Borrower_ID:" << borrowers[index].borrowid
-				<< "Lastname: " << borrowers[index].lastname
-				<< ", Firstname: " << borrowers[index].firstname
-				<< ", Number: " << borrowers[index].number
-				<< ", Borrow: " << borrowers[index].borrow << endl;
-
-			cout << "Enter the returning book ID: ";
-			cin >> bookid;
-
-			// Check if the borrower has borrowed the book
-			vector<book>::iterator it;
-			bool bookFound = false;
-			for (it = books.begin(); it != books.end(); it++) {
-				if (it->getId() == bookid) {
-					if (it->getBorrower() == userId) {
-						it->setBorrower("");
-						it->setAvailability(true);
-						borrowers[index].borrow -= 1;
-						cout << "Book returned successfully." << endl;
-					}
-					else {
-						cout << "Book not borrowed by this borrower." << endl;
-					}
-					bookFound = true;
-					break;
+		// Check if the borrower has borrowed the book
+		vector<book>::iterator it;
+		bool bookFound = false;
+		for (it = books.begin(); it != books.end(); it++) {
+			if (it->getId() == bookid) {
+				if (it->getBorrower() == userId) {
+					it->setBorrower("");
+					it->setAvailability(true);
+					borrowers[index].borrow -= 1;
+					cout << "Book returned successfully." << endl;
 				}
+				else {
+					cout << "Book not borrowed by this borrower." << endl;
+				}
+				bookFound = true;
+				break;
 			}
+		}
 
-			if (!bookFound) {
-				cout << "Borrowed book not found" << endl;
-			}
+		if (!bookFound) {
+			cout << "Borrowed book not found" << endl;
+		}
 
-			cout << "Do you want to enter another book ID? (Y/N): ";
-			cin >> ynn;
-		} while (ynn != "n" && ynn != "N");
-	}
-
-
+		cout << "Do you want to enter another book ID? (Y/N): ";
+		cin >> ynn;
+	} while (ynn != "n" && ynn != "N");
+}
 
 
-    int numOfBooksRead = 0;
-	vector<book> books;
+
+
+int numOfBooksRead = 0;
+vector<book> books;
 
 void readBookCSV(string filename)
 {
-    int numLines = countLines(filename);
-    if (numLines < 0)
-    {
-        return;
-    }
+	int numLines = countLines(filename);
+	if (numLines < 0)
+	{
+		return;
+	}
 
-    fstream inFile;
-    inFile.open(filename);
+	fstream inFile;
+	inFile.open(filename);
 
-    if (!inFile.is_open())
-    {
-        cout << "Cannot open file \"" << filename << "\"\n";
-        return;
-    }
+	if (!inFile.is_open())
+	{
+		cout << "Cannot open file \"" << filename << "\"\n";
+		return;
+	}
 
-    string line;
-    char fields[10][101] = {};
-    int numFields;
+	string line;
+	char fields[10][101] = {};
+	int numFields;
 
-    while (getline(inFile, line, '\n'))
-    {
-        numFields = extractFields(line, fields);
+	while (getline(inFile, line, '\n'))
+	{
+		numFields = extractFields(line, fields);
 
-        if (numFields >= 5)
-        {
+		if (numFields >= 5)
+		{
 			std::string id(fields[0]);
 			std::string title(fields[1]);
 			std::string author(fields[2]);
 			std::string publisher(fields[3]);
 			int year = stoi(fields[4]);
 			book b(id, title, author, publisher, year);
-            books.push_back(b);
-        }
+			books.push_back(b);
+		}
 
-        numOfBooksRead++;
-    }
+		numOfBooksRead++;
+	}
 
-    inFile.close();
+	inFile.close();
 
-    cout << "Read " << numOfBooksRead << " records from file \"" << filename << "\"\n";
+	cout << "Read " << numOfBooksRead << " records from file \"" << filename << "\"\n";
 }
 
 void removeBorrowerById(borrower*& borrowers, int& numBorrowers, const string& userId) {//R2.4
@@ -583,19 +502,19 @@ void addBorrower(borrower*& borrowers, int& numBorrowers, const string& borrower
 void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 	int answer;
 	cout << "*** Manage Borrowers *** \n"
-	"[1] Display borrowers \n"
-	"[2] Search borrower \n"
-	"[3] Add borrower \n"
-	"[4] Remove borrower \n"
-	"[5] Back \n"
-	"************************ \n"
-	"Option (1 - 5):";
+		"[1] Display borrowers \n"
+		"[2] Search borrower \n"
+		"[3] Add borrower \n"
+		"[4] Remove borrower \n"
+		"[5] Back \n"
+		"************************ \n"
+		"Option (1 - 5):";
 
 	cin >> answer;
 	string im;
 	string searchid;
 	int removeIndex;
-	
+
 
 	while (true) {
 		switch (answer) {
@@ -740,8 +659,8 @@ void manageborrower(borrower*& borrowers, int& numBorrowers) {//R2
 		}
 	}
 }
-	
-	
+
+
 void borrowBook(vector<book>& books, borrower* borrowers, int numBorrowers) {
 	// Prompt for borrower ID
 	string borrowerId;
@@ -807,7 +726,7 @@ vector<book> top_books(const vector<book>& books, int numBooks)//R5 La Yu Fung
 	vector<book> sortedBooks(books.begin(), books.end());
 	sort(sortedBooks.begin(), sortedBooks.end(), [](const book& a, const book& b) {
 		return a.getBorrowCount() > b.getBorrowCount();
-		});
+	});
 
 	vector<book> top5Books(sortedBooks.begin(), sortedBooks.begin() + min(5, numBooks));
 	return top5Books;
@@ -831,168 +750,166 @@ void print_top_books(const vector<book>& top5Books)//R5 La Yu Fung
 
 void Member_list() {
 	cout << "   Student name     Student ID   Class   Tutorial group" << endl;
-	cout << " CHAN KWOK HIN       22156066A    204           C" << endl;
 	cout << "   CHEN Junjie       22017785A    201           C" << endl;
 	cout << "  CHENG Wai Shing    22063403A    201           C" << endl;
 	cout << " CHEUNG Chun Sing    22176446A    204           C" << endl;
-	cout << " CHEUNG LOK YIN      22166557A    204           C" << endl;
 	cout << "    LA Yu Fung       22177271A    204           D" << endl;
 }
 
-	int main() {
-		string filename;
-		string filename_borrow;
-		char answer;
-		int mode;
-		borrower* borrowers = nullptr;
-		int numBorrowers = 0;
+int main() {
+	string filename;
+	string filename_borrow;
+	char answer;
+	int mode;
+	borrower* borrowers = nullptr;
+	int numBorrowers = 0;
 
-		cout << "Import book list from file? [Y/N]: ";
-		cin >> answer;
-		cin.ignore();
-		if (tolower(answer) == 'y') {
-			cout << "Input path to CSV file: ";
-			getline(cin, filename);
-			readCSV(filename);
-		}
-		else {
-			cout << "No borrower list is imported \n";
-		}
-		//
-		cout << "Import borrower list from file? [Y/N]: ";
-		cin >> answer;
-		cin.ignore();
-		if (tolower(answer) == 'y') {
-			cout << "Input path to CSV file: ";
-			getline(cin, filename_borrow);
-			numBorrowers = readCSV_borrow(filename_borrow, borrowers); // Assign the return value to numBorrowers
-		}
-		else {
-			cout << "No borrower list is imported \n";
-		}
-
-		cout << "*** Library Management System *** \n"
-			"[1] Manage books \n"
-			"[2] Manage borrowers \n"
-			"[3] Borrow book(s) \n"
-			"[4] Return book(s) \n"
-			"[5] Popular books \n"
-			"[6] Member List \n"
-			"[7] Exit \n"
-			"********************************* \n"
-			"Option(1 - 7) :";
-		cin >> mode;
-		cin.clear();
-		cin.ignore(numeric_limits<streamsize>::max(), '\n');
-		vector<book> top5 = top_books(books, books.size());
-
-		while (true) {
-			switch (mode) {
-			case 1:
-				//
-				break;
-			case 2:
-				manageborrower(borrowers, numBorrowers);
-				cout << "*** Library Management System *** \n"
-					"[1] Manage books \n"
-					"[2] Manage borrowers \n"
-					"[3] Borrow book(s) \n"
-					"[4] Return book(s) \n"
-					"[5] Useful feature(s) added \n"
-					"[6] Member List \n"
-					"[7] Exit \n"
-					"********************************* \n"
-					"Option(1 - 7) :";
-				cin >> mode;
-				cin.clear();
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
-				break;
-			case 3:
-				cout << "*********************************\n";
-				cout << "*********Borrow book(s)**********\n";
-				borrowBook(books, borrowers, numBorrowers);
-				cout << "*********************************\n";
-				break;
-			case 4:
-				returnbook(filename_borrow, borrowers, numBorrowers, books, numOfBooksRead);
-				cout << "*** Library Management System *** \n"
-					"[1] Manage books \n"
-					"[2] Manage borrowers \n"
-					"[3] Borrow book(s) \n"
-					"[4] Return book(s) \n"
-					"[5] popular book \n"
-					"[6] Member List \n"
-					"[7] Exit \n"
-					"********************************* \n"
-					"Option(1 - 7) :";
-				cin >> mode;
-				cin.clear();
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
-				break;
-			case 5:
-				cout << "Top 5 most popular books: " << endl;
-				print_top_books(top5);
-				cout << "*** Library Management System *** \n"
-					"[1] Manage books \n"
-					"[2] Manage borrowers \n"
-					"[3] Borrow book(s) \n"
-					"[4] Return book(s) \n"
-					"[5] popular book \n"
-					"[6] Member List \n"
-					"[7] Exit \n"
-					"********************************* \n"
-					"Option(1 - 7) :";
-				cin >> mode;
-				cin.clear();
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
-				break;
-			case 6:
-				cout << "*********************************\n";
-				cout << "***********Member list***********\n";
-				Member_list();
-				cout << "*********************************\n";
-				cout << "*** Library Management System *** \n"
-					"[1] Manage books \n"
-					"[2] Manage borrowers \n"
-					"[3] Borrow book(s) \n"
-					"[4] Return book(s) \n"
-					"[5] popular book \n"
-					"[6] Member List \n"
-					"[7] Exit \n"
-					"********************************* \n"
-					"Option(1 - 7) :";
-				cin >> mode;
-				cin.clear();
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			case 7:
-				char confirmExit;
-				do {
-					cout << "Are you sure you want to exit? (Y/N): ";
-					cin >> confirmExit;
-					confirmExit = tolower(confirmExit);
-					if (confirmExit == 'y') {
-						exit(0);
-					}
-					else if (confirmExit == 'n') {
-						cout << "********************************* \n"
-							"Option(1 - 7) :";
-						cin >> mode;
-						cin.clear();
-						cin.ignore(numeric_limits<streamsize>::max(), '\n');
-					}
-					else {
-						cout << "Invalid input. Please enter 'Y' or 'N'.\n";
-					}
-				} while (confirmExit != 'y' && confirmExit != 'n');
-				break;
-			default:
-				cout << "Enter number between 1-7 only \n"
-					"********************************* \n"
-					"Option(1 - 7) :";
-				cin >> mode;
-				cin.clear();
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			}
-		}
-		return 0;
+	cout << "Import book list from file? [Y/N]: ";
+	cin >> answer;
+	cin.ignore();
+	if (tolower(answer) == 'y') {
+		cout << "Input path to CSV file: ";
+		getline(cin, filename);
+		readCSV(filename);
 	}
+	else {
+		cout << "No borrower list is imported \n";
+	}
+	//
+	cout << "Import borrower list from file? [Y/N]: ";
+	cin >> answer;
+	cin.ignore();
+	if (tolower(answer) == 'y') {
+		cout << "Input path to CSV file: ";
+		getline(cin, filename_borrow);
+		numBorrowers = readCSV_borrow(filename_borrow, borrowers); // Assign the return value to numBorrowers
+	}
+	else {
+		cout << "No borrower list is imported \n";
+	}
+
+	cout << "*** Library Management System *** \n"
+		"[1] Manage books \n"
+		"[2] Manage borrowers \n"
+		"[3] Borrow book(s) \n"
+		"[4] Return book(s) \n"
+		"[5] Popular books \n"
+		"[6] Member List \n"
+		"[7] Exit \n"
+		"********************************* \n"
+		"Option(1 - 7) :";
+	cin >> mode;
+	cin.clear();
+	cin.ignore(numeric_limits<streamsize>::max(), '\n');
+	vector<book> top5 = top_books(books, books.size());
+
+	while (true) {
+		switch (mode) {
+		case 1:
+			//
+			break;
+		case 2:
+			manageborrower(borrowers, numBorrowers);
+			cout << "*** Library Management System *** \n"
+				"[1] Manage books \n"
+				"[2] Manage borrowers \n"
+				"[3] Borrow book(s) \n"
+				"[4] Return book(s) \n"
+				"[5] Useful feature(s) added \n"
+				"[6] Member List \n"
+				"[7] Exit \n"
+				"********************************* \n"
+				"Option(1 - 7) :";
+			cin >> mode;
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			break;
+		case 3:
+			cout << "*********************************\n";
+			cout << "*********Borrow book(s)**********\n";
+			borrowBook(books, borrowers, numBorrowers);
+			cout << "*********************************\n";
+			break;
+		case 4:
+			returnbook(filename_borrow, borrowers, numBorrowers, books, numOfBooksRead);
+			cout << "*** Library Management System *** \n"
+				"[1] Manage books \n"
+				"[2] Manage borrowers \n"
+				"[3] Borrow book(s) \n"
+				"[4] Return book(s) \n"
+				"[5] popular book \n"
+				"[6] Member List \n"
+				"[7] Exit \n"
+				"********************************* \n"
+				"Option(1 - 7) :";
+			cin >> mode;
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			break;
+		case 5:
+			cout << "Top 5 most popular books: " << endl;
+			print_top_books(top5);
+			cout << "*** Library Management System *** \n"
+				"[1] Manage books \n"
+				"[2] Manage borrowers \n"
+				"[3] Borrow book(s) \n"
+				"[4] Return book(s) \n"
+				"[5] popular book \n"
+				"[6] Member List \n"
+				"[7] Exit \n"
+				"********************************* \n"
+				"Option(1 - 7) :";
+			cin >> mode;
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			break;
+		case 6:
+			cout << "*********************************\n";
+			cout << "***********Member list***********\n";
+			Member_list();
+			cout << "*********************************\n";
+			cout << "*** Library Management System *** \n"
+				"[1] Manage books \n"
+				"[2] Manage borrowers \n"
+				"[3] Borrow book(s) \n"
+				"[4] Return book(s) \n"
+				"[5] popular book \n"
+				"[6] Member List \n"
+				"[7] Exit \n"
+				"********************************* \n"
+				"Option(1 - 7) :";
+			cin >> mode;
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		case 7:
+			char confirmExit;
+			do {
+				cout << "Are you sure you want to exit? (Y/N): ";
+				cin >> confirmExit;
+				confirmExit = tolower(confirmExit);
+				if (confirmExit == 'y') {
+					exit(0);
+				}
+				else if (confirmExit == 'n') {
+					cout << "********************************* \n"
+						"Option(1 - 7) :";
+					cin >> mode;
+					cin.clear();
+					cin.ignore(numeric_limits<streamsize>::max(), '\n');
+				}
+				else {
+					cout << "Invalid input. Please enter 'Y' or 'N'.\n";
+				}
+			} while (confirmExit != 'y' && confirmExit != 'n');
+			break;
+		default:
+			cout << "Enter number between 1-7 only \n"
+				"********************************* \n"
+				"Option(1 - 7) :";
+			cin >> mode;
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		}
+	}
+	return 0;
+}
