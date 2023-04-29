@@ -313,12 +313,54 @@ void displayMenu(const vector<book>& books) {//R1
 
 			break;
 
-		case 3:break;
+		case 3:
+			void addbook(vector<book>&books); {
+				//Get details from user input
+				string id, title, author, publisher;
+				int year;
+				cout << "Enter ID: ";
+				getline(cin, id);
+				cout << "Enter Title: ";
+				getline(cin, title);
+				cout << "Enter auther(s) separated by semicolon: ";
+				getline(cin, author);
+				cout << "Enter Publisher: ";
+				getline(cin, publisher);
+				cout << "Enter Year: ";
+				cin >> year;
+
+				//Check ID is unique
+				for (const book& book : books) {
+					cout << "Error: ID already exists.\n";
+					return;
+				}
+
+				//Check year is positive
+				if (year <= 0) {
+					cout << "Error:Invalid year.\n";
+					return;
+				}
+
+				// Create new book object and add to vector
+				(id, title, author, publisher, year, true);
+				cout << "Book added successfully." << endl;
+			}
+			cout << "*** Manage Books *** \n"
+				"[1] Display books \n"
+				"[2] Search book \n"
+				"[3] Add book \n"
+				"[4] Remove book \n"
+				"[5] Back \n"
+				"************************ \n"
+				"Option (1 - 5):";
+			cin >> answer;
+			break;
 		case 4:
 			//function of R1.4
 			break;
 		case 5:
 			//function of R1.5
+			return;
 			break;
 		default:
 			cout << "Enter number between 1-5 only \n"
@@ -849,6 +891,20 @@ int main() {
 	while (true) {
 		switch (mode) {
 		case 1:
+			displayMenu(books);
+			cout << "*** Library Management System *** \n"
+				"[1] Manage books \n"
+				"[2] Manage borrowers \n"
+				"[3] Borrow book(s) \n"
+				"[4] Return book(s) \n"
+				"[5] popular book \n"
+				"[6] Member List \n"
+				"[7] Exit \n"
+				"********************************* \n"
+				"Option(1 - 7) :";
+			cin >> mode;
+			cin.clear();
+			cin.ignore(numeric_limits<streamsize>::max(), '\n');
 			//
 			break;
 		case 2:
