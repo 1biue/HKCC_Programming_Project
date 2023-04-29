@@ -243,7 +243,22 @@ int findBookBybookId(vector<book>& books, const string& userId) {
 /// <summary>
 /// file reading and editing
 /// </summary>  
+//fuctions for remove books into file.
+void removebookbyid(char YorN) {//R1.4
+	
+	if (YorN == 'y' || YorN == 'Y') {
+		cout << "Book removed successfully." << endl;
+		cout << "************************ \n";
+	}
+	else if  (YorN == 'n' || YorN == 'N') {
+		cout << "Book not removed." << endl;
+		cout << "************************ \n";
+	}
+	
+}
 
+string ID, Title, Author, Publisher;
+char confirmation;
 //R1
 void displayMenu(const vector<book>& books) {//R1
 	int answer;
@@ -268,11 +283,11 @@ void displayMenu(const vector<book>& books) {//R1
 
 			for (const book& b : books) {
 				sort(b.getId().begin(), b.getId().end());
-				cout << left << setw(11) << b.getId()
-					<< setw(30) << b.getTitle()
-					<< setw(30) << b.getAuthor()
-					<< setw(30) << b.getPublisher()
-					<< b.getYear() << endl;
+				cout << left << setw(11) << b.getId();
+				cout << setw(30) << b.getTitle();
+				cout << setw(30) << b.getAuthor();
+				cout << setw(30) << b.getPublisher();
+				cout << b.getYear() << endl;
 			}
 			cout << "*** Manage Books *** \n"
 				"[1] Display books \n"
@@ -352,6 +367,24 @@ void displayMenu(const vector<book>& books) {//R1
 			break;
 		case 4:
 			//function of R1.4
+			cout << "To remove a book from the system, the user needs to provide the ID of the book." << endl;
+			cin >> ID;
+
+			cout << "*********************************\n";
+			cout << "Do you want to remove this book? (y/n): ";
+			cin >> confirmation;
+			removebookbyid(confirmation);
+
+
+			cout << "*** Manage Borrowers *** \n"
+				"[1] Display borrowers \n"
+				"[2] Search borrower \n"
+				"[3] Add borrower \n"
+				"[4] Remove borrower \n"
+				"[5] Back \n"
+				"************************ \n"
+				"Option (1 - 5):";
+			cin >> answer;
 			break;
 		case 5:
 			//function of R1.5
