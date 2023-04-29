@@ -1,0 +1,24 @@
+﻿  programming_project.cpp
+C:\Users\Wai\Documents\Visual Studio 2022\ewfwqdwd\programming_project\programming_project\programming_project.cpp(19,8): error C2065: 'book': 未宣告的識別項
+C:\Users\Wai\Documents\Visual Studio 2022\ewfwqdwd\programming_project\programming_project\programming_project.cpp(19,1): error C2923: 'std::vector': 對參數 '_Ty' 而言，'book' 不是有效的 樣板 型別引數
+C:\Users\Wai\Documents\Visual Studio 2022\ewfwqdwd\programming_project\programming_project\programming_project.cpp(19,8): message : 請參閱 'book' 的宣告
+C:\Users\Wai\Documents\Visual Studio 2022\ewfwqdwd\programming_project\programming_project\programming_project.cpp(19,1): error C2976: 'std::vector': 樣板 引數太少
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\include\vector(494,1): message : 請參閱 'std::vector' 的宣告
+C:\Users\Wai\Documents\Visual Studio 2022\ewfwqdwd\programming_project\programming_project\programming_project.cpp(19,14): error C2133: 'bookList': 未知的大小
+C:\Users\Wai\Documents\Visual Studio 2022\ewfwqdwd\programming_project\programming_project\programming_project.cpp(19,14): error C2512: 'std::vector': 沒有適當的預設建構函式
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\include\vector(494,1): message : 請參閱 'std::vector' 的宣告
+C:\Users\Wai\Documents\Visual Studio 2022\ewfwqdwd\programming_project\programming_project\programming_project.cpp(21,15): error C2065: 'books': 未宣告的識別項
+C:\Users\Wai\Documents\Visual Studio 2022\ewfwqdwd\programming_project\programming_project\programming_project.cpp(22,7): error C2065: 'book': 未宣告的識別項
+C:\Users\Wai\Documents\Visual Studio 2022\ewfwqdwd\programming_project\programming_project\programming_project.cpp(22,12): error C2146: 語法錯誤: 遺漏 ';' (在識別項 'books' 之前)
+C:\Users\Wai\Documents\Visual Studio 2022\ewfwqdwd\programming_project\programming_project\programming_project.cpp(22,18): error C2143: 語法錯誤: 遺漏 ';' (在 ':' 之前)
+C:\Users\Wai\Documents\Visual Studio 2022\ewfwqdwd\programming_project\programming_project\programming_project.cpp(22,18): error C2143: 語法錯誤: 遺漏 ')' (在 ':' 之前)
+C:\Users\Wai\Documents\Visual Studio 2022\ewfwqdwd\programming_project\programming_project\programming_project.cpp(22,18): error C2059: 語法錯誤: ':'
+C:\Users\Wai\Documents\Visual Studio 2022\ewfwqdwd\programming_project\programming_project\programming_project.cpp(22,28): error C2059: 語法錯誤: ')'
+C:\Users\Wai\Documents\Visual Studio 2022\ewfwqdwd\programming_project\programming_project\programming_project.cpp(22,30): error C2143: 語法錯誤: 遺漏 ';' (在 '{' 之前)
+C:\Users\Wai\Documents\Visual Studio 2022\ewfwqdwd\programming_project\programming_project\programming_project.cpp(255,15): warning C4244: 'return': 將 '__int64' 轉換為 'int'，由於類型不同，可能導致資料遺失
+C:\Users\Wai\Documents\Visual Studio 2022\ewfwqdwd\programming_project\programming_project\programming_project.cpp(414,2): error C2059: 語法錯誤: '}'
+C:\Users\Wai\Documents\Visual Studio 2022\ewfwqdwd\programming_project\programming_project\programming_project.cpp(414,2): error C2143: 語法錯誤: 遺漏 ';' (在 '}' 之前)
+C:\Users\Wai\Documents\Visual Studio 2022\ewfwqdwd\programming_project\programming_project\programming_project.cpp(416,113): error C2143: 語法錯誤: 遺漏 ';' (在 '{' 之前)
+C:\Users\Wai\Documents\Visual Studio 2022\ewfwqdwd\programming_project\programming_project\programming_project.cpp(416,113): error C2447: '{': 遺漏函式標頭 (舊樣式型式清單?)
+C:\Users\Wai\Documents\Visual Studio 2022\ewfwqdwd\programming_project\programming_project\programming_project.cpp(887,52): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
+C:\Users\Wai\Documents\Visual Studio 2022\ewfwqdwd\programming_project\programming_project\programming_project.cpp(917,5): error C3861: 'returnbook': 找不到識別項
